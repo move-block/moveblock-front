@@ -7,9 +7,9 @@ const CheckAuth = ({
   children: React.ReactElement;
   unconnected: React.ReactElement;
 }) => {
-  const { isConnected } = useWallet();
+  const { connected } = useWallet();
 
-  return isConnected ? children : unconnected;
+  return connected ? children : unconnected;
 };
 
 export default CheckAuth;

@@ -10,6 +10,9 @@ import { RecoilRoot } from 'recoil';
 import { BG_COLOR, gray, PRIMARY_COLOR, TEXT_COLOR } from 'src/colors';
 import Gnb from '~common/components/Gnb';
 import { Poppins } from '@next/font/google';
+import { PetraWallet } from "petra-plugin-wallet-adapter";
+import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
+
 
 import '~styles/globals.css';
 
@@ -18,6 +21,7 @@ export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 };
 
 const queryClient = new QueryClient();
+const wallets = [new PetraWallet()];
 
 const poppins = Poppins({
   weight: ['400', '500', '700'],
@@ -34,6 +38,7 @@ export default function App({
 
   return (
     <RecoilRoot>
+      <AptosWalletAdapterProvider  plugins={wallets} autoConnect={true}>
       <QueryClientProvider client={queryClient}>
         <StyleProvider hashPriority="high">
           <ConfigProvider
@@ -85,6 +90,7 @@ export default function App({
         </StyleProvider>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
+      </AptosWalletAdapterProvider>
     </RecoilRoot>
   );
 }

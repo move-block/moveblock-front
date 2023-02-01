@@ -1,20 +1,21 @@
 import { DisconnectOutlined, UnlockFilled } from '@ant-design/icons';
 import { Button } from 'antd';
-import useWallet from '~common/hooks/useWallet';
+import { useWallet } from "@aptos-labs/wallet-adapter-react";
 import { truncateWalletAddress } from '~common/utils';
+import usePetraWallet from '~common/hooks/useWallet';
 
 interface Props {
   responsive?: boolean;
 }
 
 const Connect = ({ responsive }: Props) => {
-  const { connect } = useWallet();
+ const { connectPetra } = usePetraWallet();
 
   return (
     <Button
       type="primary"
       className="flex items-center"
-      onClick={() => connect()}
+      onClick={() => connectPetra()}
     >
       <UnlockFilled />
       <span className={responsive ? 'max-sm:hidden' : ''}>Connect Wallet</span>
@@ -23,12 +24,14 @@ const Connect = ({ responsive }: Props) => {
 };
 
 const Disconnect = ({ responsive }: Props) => {
-  const { disconnect, wallet } = useWallet();
+  const { disconnect, account } = useWallet();
 
   return (
-    <Button className="flex items-center" onClick={() => disconnect()}>
+    <Button className="flex items-center"
+             onClick={() => disconnect()}
+    >
       <span className={responsive ? 'max-sm:hidden' : ''}>
-        {truncateWalletAddress(wallet?.address || '')}
+        {truncateWalletAddress(account?.address||'')}
       </span>
       <DisconnectOutlined />
     </Button>
@@ -36,9 +39,9 @@ const Disconnect = ({ responsive }: Props) => {
 };
 
 const ConnectWallet = ({ responsive = false }: Props) => {
-  const { isConnected } = useWallet();
+  const { connected  } = useWallet();
 
-  return isConnected ? (
+  return connected ? (
     <Disconnect responsive={responsive} />
   ) : (
     <Connect responsive={responsive} />
