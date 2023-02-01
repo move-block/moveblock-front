@@ -1,17 +1,8 @@
+import { MoveFunctionWithDetailRawData } from 'src/Api';
 import { MoveFunctionWithDetail } from 'src/MoveFunction';
 
 export interface QueryProps {
   fullFunctionName: string;
-}
-
-interface Data {
-  id: number;
-  address: string;
-  module_name: string;
-  function_name: string;
-  description: string | null;
-  param_names: string[] | null;
-  generic_type_params: any[] | null;
 }
 
 const fetchFunctionDetail = async ({ fullFunctionName }: QueryProps) => {
@@ -35,13 +26,12 @@ const fetchFunctionDetail = async ({ fullFunctionName }: QueryProps) => {
   }
 
   const {
-    id,
-    module_name,
-    function_name,
-    description,
-    param_names,
-    generic_type_params,
-  } = data as Data;
+    module_function: { id, module_name },
+    function_detail,
+  } = data as MoveFunctionWithDetailRawData;
+
+  const { function_name, description, param_names, generic_type_params } =
+    function_detail || {};
 
   return {
     id,
