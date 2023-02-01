@@ -48,3 +48,18 @@ export interface MoveFunctionDetailRawData {
   param_names: string[];
   generic_type_param_name: string[];
 }
+
+export interface MoveBlockRawData {
+  type: string;
+  function: string;
+  arguments: string[];
+  type_arguments: string[];
+}
+
+export interface MoveStackRawData {
+  id: number;
+  address: string;
+  name: string;
+  stack: MoveBlockRawData[];
+  last_edit_datetime: string;
+}

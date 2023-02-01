@@ -1,21 +1,28 @@
+import { AccountRawData, MoveModuleRawData } from './Api';
+
 export type Visibility = 'public' | 'friend';
 
-export interface MoveFunction {
+interface MoveFunctionMeta {
   id: number;
   name: string;
-  visibility: Visibility;
-  isEntry: boolean;
   module: {
     name: string;
   };
   account: {
     address: string;
-    alias: string;
+    alias?: string;
   };
 }
 
+interface MoveFunctionAccessInfo {
+  visibility: Visibility;
+  isEntry: boolean;
+}
+
+export type MoveFunction = MoveFunctionMeta & MoveFunctionAccessInfo;
+
 type MoveFunctionParam = {
-  type: string;
+  type?: string;
   name?: string;
   value?: string;
 };
@@ -25,12 +32,14 @@ type GenericTypeParam = {
   name?: string;
 };
 
-export interface MoveFunctionWithDetail extends MoveFunction {
-  params: MoveFunctionParam[];
-  genericTypeParams: GenericTypeParam[];
-  returnTypes?: string[];
+export interface MoveFunctionDetail {
   description: string;
+  params: MoveFunctionParam[];
+  genericTypeParams?: GenericTypeParam[];
+  returnTypes?: string[];
 }
+
+export type MoveFunctionWithDetail = MoveFunction & MoveFunctionDetail;
 
 export interface MoveModule {
   address: string;
@@ -44,4 +53,31 @@ export interface MoveModule {
   friends: string[];
   moveModule: MoveModuleRawData;
   moveFunctions: MoveFunctionWithDetail[];
+}
+
+type MoveFunctionArguments = {
+  params: (Partial<MoveFunctionParam> & {
+    value: string;
+  })[];
+  genericTypeParams: (Partial<GenericTypeParam> & {
+    value: string;
+  })[];
+};
+
+export type MoveBlockPreview = {
+  functionName: string;
+};
+export type MoveBlock = MoveBlockPreview &
+  MoveFunctionArguments &
+  Partial<MoveFunctionDetail>;
+
+export interface MoveStackPreview {
+  id: number;
+  stackName: string;
+  blocks: MoveBlockPreview[];
+  lastEditedAt: string;
+}
+
+export interface MoveStack extends MoveStackPreview {
+  blocks: MoveBlock[];
 }
