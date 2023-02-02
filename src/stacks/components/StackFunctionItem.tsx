@@ -197,9 +197,11 @@ const StackFunctionItem = ({
             Simulate
           </Button>
         ) : (
-          <Button type="primary" size="small" onClick={onSave}>
-            Set Block
-          </Button>
+          (paramValues.length > 0 || genericParamValues.length > 0) && (
+            <Button type="primary" size="small" onClick={onSave}>
+              Set Block
+            </Button>
+          )
         )}
       </div>
     </CollapsableItemContainer>
