@@ -6,15 +6,11 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import PageContainer from '~common/components/PageContainer';
 import HoverableItemContainer from '~common/components/HoverableItemContainer';
 import useWallet from '~common/hooks/useWallet';
-import useStack from '~stacks/hooks/useStack';
-import useStackMutation from '~stacks/hooks/useStackMutation';
 import Button from '../../common/components/Button';
 import FunctionModal from './FunctionModal';
 import StackFunctionItem from './StackFunctionItem';
 import StackTitle from './StackTitle';
-import ExecutionModal from '~stacks/components/ExecutionModal';
-import { useRouter } from 'next/router';
-import useStackExecution from '~stacks/hooks/useStackExecution';
+import { MoveStack } from 'src/MoveFunction';
 
 export type BlockFormType = {
   functionName: string;
@@ -31,18 +27,25 @@ const getEmptyForm = (): FormType => ({
   blocks: [],
 });
 
-const StackEditor = ({ id }: { id?: number }) => {
-  const isNew = !id;
+const StackEditor = ({
+  stack,
+  isLoading = false,
+  isNew = false,
+  onSubmit,
+  onDelete,
+  onExecute,
+}: {
+  stack?: MoveStack;
+  isLoading?: boolean;
+  isNew?: boolean;
+  onSubmit: (stack: FormType) => Promise<void>;
+  onDelete?: () => Promise<void>;
+  onExecute?: () => Promise<void>;
+}) => {
   const { account } = useWallet();
   const address = account?.address;
-  const router = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const { data: stack, isLoading } = useStack({
-    id,
-    address,
-  });
 
   const {
     control,
@@ -66,56 +69,21 @@ const StackEditor = ({ id }: { id?: number }) => {
     name: 'blocks',
   });
 
-  const {
-    create: createStack,
-    update: updateStack,
-    delete: deleteStack,
-  } = useStackMutation({
-    id,
-    address,
-  });
-
   const onClickSave = handleSubmit(async (stack) => {
     if (!address) {
       return;
     }
 
-    try {
-      if (isNew) {
-        await createStack({ stack });
-        // should redirect to the new stack with edit mode
-        router.replace('/stacks');
-      } else {
-        await updateStack({ stack });
-      }
-    } catch (e) {
-      console.error(e);
-    }
+    await onSubmit(stack);
   });
 
   const onClickDelete = async () => {
-    if (!address || !id) {
+    if (!address || !onDelete) {
       return;
     }
 
-    try {
-      await deleteStack();
-      router.replace('/stacks');
-    } catch (e) {
-      console.error(e);
-    }
+    await onDelete();
   };
-
-  const [isExecutionModalOpen, setIsExecutionModalOpen] = useState(false);
-  const {
-    executionStatus,
-    byteCode,
-    transactionHash,
-    execute: executeStack,
-  } = useStackExecution({
-    id,
-    address,
-  });
 
   useEffect(() => {
     if (stack) {
@@ -169,11 +137,7 @@ const StackEditor = ({ id }: { id?: number }) => {
               disabled={isNew}
               type="primary"
               size="middle"
-              onClick={async () => {
-                const executionResult = await executeStack();
-                console.log('executionResult', executionResult);
-                setIsExecutionModalOpen(true);
-              }}
+              onClick={onExecute}
             >
               Execute
             </Button>
@@ -184,7 +148,7 @@ const StackEditor = ({ id }: { id?: number }) => {
         {editingBlocks.map(
           ({ functionName, paramValues, genericParamValues }, index) => (
             <StackFunctionItem
-              key={`${id}-${index}`}
+              key={`${index}`}
               control={control}
               functionIndex={index}
               onRemove={async () => {
@@ -235,12 +199,6 @@ const StackEditor = ({ id }: { id?: number }) => {
             genericParamValues: new Array(genericParamLength).fill(''),
           });
         }}
-      />
-      <ExecutionModal
-        isOpen={isExecutionModalOpen}
-        onClose={() => setIsExecutionModalOpen(false)}
-        byteCode={byteCode}
-        transactionHash={transactionHash}
       />
     </PageContainer>
   );
