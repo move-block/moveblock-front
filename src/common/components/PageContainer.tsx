@@ -1,7 +1,7 @@
 import { twMerge } from 'tailwind-merge';
 import { DefaultContainerProps } from './ContainerProps';
 
-const Container = ({
+const PageContainer = ({
   children,
   className,
   ...props
@@ -9,7 +9,7 @@ const Container = ({
   return (
     <div
       className={twMerge(
-        'px-[50px] py-4 w-full max-w-7xl flex-1 mx-auto flex flex-col gap-4',
+        'py-4 w-full max-w-7xl flex-1 mx-auto flex flex-col gap-4',
         className
       )}
       {...props}
@@ -19,4 +19,4 @@ const Container = ({
   );
 };
 
-export default Container;
+export default PageContainer;

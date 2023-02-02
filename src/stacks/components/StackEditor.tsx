@@ -1,12 +1,13 @@
 import { PlusCircleFilled } from '@ant-design/icons';
-import { Input, Skeleton, Button } from 'antd';
+import { Input, Skeleton } from 'antd';
 import { useState, useEffect } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import Container from '~common/components/Container';
+import PageContainer from '~common/components/PageContainer';
 import HoverableItemContainer from '~common/components/HoverableItemContainer';
 import useWallet from '~common/hooks/useWallet';
 import useStack from '~stacks/hooks/useStack';
 import useStackMutation from '~stacks/hooks/useStackMutation';
+import Button from '../../common/components/Button';
 import FunctionModal from './FunctionModal';
 import StackFunctionItem from './StackFunctionItem';
 import ExecutionModal from '~stacks/components/ExecutionModal';
@@ -154,7 +155,7 @@ const StackEditor = ({ id }: { id?: number }) => {
   }, [replaceBlock, resetForm, setValue, stack]);
 
   return (
-    <Container>
+    <PageContainer>
       <div className="flex justify-between items-end">
         {isEditing ? (
           <Controller
@@ -185,24 +186,20 @@ const StackEditor = ({ id }: { id?: number }) => {
           {isEditing ? (
             <>
               <Button
-                type="primary"
-                danger
-                className="border-none h-fit py-0"
+                type="danger"
+                size="middle"
                 onClick={() => onClickDelete()}
               >
                 Delete
               </Button>
               <Button
-                className="border-none h-fit py-0"
+                type="default"
+                size="middle"
                 onClick={() => setIsEditing(false)}
               >
                 Cancel
               </Button>
-              <Button
-                type="primary"
-                className="border-none h-fit py-0"
-                onClick={onClickSave}
-              >
+              <Button type="primary" size="middle" onClick={onClickSave}>
                 Save Stack
               </Button>
             </>
@@ -212,7 +209,8 @@ const StackEditor = ({ id }: { id?: number }) => {
                 <Skeleton.Button active />
               ) : (
                 <Button
-                  className="border-none h-fit py-0"
+                  type="default"
+                  size="middle"
                   onClick={() => setIsEditing(true)}
                 >
                   Edit
@@ -221,11 +219,7 @@ const StackEditor = ({ id }: { id?: number }) => {
               {isLoading ? (
                 <Skeleton.Button active />
               ) : (
-                <Button
-                  type="primary"
-                  className="border-none h-fit py-0"
-                  onClick={onClickExecute}
-                >
+                <Button type="primary" size="middle" onClick={onClickExecute}>
                   Execute
                 </Button>
               )}
@@ -290,7 +284,7 @@ const StackEditor = ({ id }: { id?: number }) => {
         byteCode={byteCode}
         transactionHash={transactionHash}
       />
-    </Container>
+    </PageContainer>
   );
 };
 

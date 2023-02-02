@@ -1,4 +1,9 @@
-import { Input, Divider as AntDivider, Button as AntdButton, Typography } from 'antd';
+import {
+  Input,
+  Divider as AntDivider,
+  Button as AntdButton,
+  Typography,
+} from 'antd';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { moduleAtom } from '~pages/modules/[account]/[module]';
@@ -24,9 +29,19 @@ const Divider = () => {
 
 const Button = (props: any) => {
   return (
-    <AntdButton  style={{height: "26px", width: "83px", fontSize: "12px", display: "flex", justifyContent: "center", alignItems: "center"}} {...props} />
-  )
-}
+    <AntdButton
+      style={{
+        height: '26px',
+        width: '83px',
+        fontSize: '12px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+      {...props}
+    />
+  );
+};
 
 const githubDependency = (
   name: string,
@@ -104,11 +119,15 @@ const ModuleInfo = () => {
           {description ? description : NO_DATA_MESSAGE}
           <Divider />
           <div className="flex flex-row">
-            <h4 className='pr-2'>Github Dependency</h4>
-            <Button type="ghost" style={{width: '1em', height: '1em'}}  icon={<CopyOutlined />} />
+            <h4 className="pr-2">Github Dependency</h4>
+            <Button
+              type="ghost"
+              style={{ width: '1em', height: '1em' }}
+              icon={<CopyOutlined />}
+            />
           </div>
-          <Paragraph style={{ maxWidth: "calc(100% - 20px)", marginTop: 24 }}>
-            <pre style={{ border: "none" }}>
+          <Paragraph style={{ maxWidth: 'calc(100% - 20px)', marginTop: 24 }}>
+            <pre style={{ border: 'none' }}>
               {githubDependency(name, github_url, rev, subdir)}
             </pre>
           </Paragraph>
@@ -120,14 +139,14 @@ const ModuleInfo = () => {
             <h4> Address </h4>
             {alias ? `${alias}(${address})` : address}
             <Input
-              defaultValue={alias ? alias : ""}
+              defaultValue={alias ? alias : ''}
               placeholder={`${DEFAULT_ADDRESS_MESSAGE}`}
               onChange={(e) => setInputAlias(e.target.value)}
             />
             <Divider />
             <h4> Description </h4>
             <Input
-              defaultValue={description ? description : ""}
+              defaultValue={description ? description : ''}
               placeholder={DEFAULT_DESCRIPTION_MESSAGE}
               onChange={(e) => setInputDescription(e.target.value)}
             />
@@ -137,7 +156,7 @@ const ModuleInfo = () => {
               <span className="self-center w-14">URL : </span>
               <Input
                 className="flex-1 items-center"
-                defaultValue={github_url ? github_url : ""}
+                defaultValue={github_url ? github_url : ''}
                 placeholder={DEFAULT_GITHUB_URL_MESSAGE}
                 onChange={(e) => setInputGithupUrl(e.target.value)}
               />
@@ -147,8 +166,8 @@ const ModuleInfo = () => {
               <span className="self-center w-14">Rev :</span>
               <Input
                 className="flex-1 items-center"
-                style={{ width: "calc(100% - 8px)" }}
-                defaultValue={rev ? rev : ""}
+                style={{ width: 'calc(100% - 8px)' }}
+                defaultValue={rev ? rev : ''}
                 placeholder={DEFAULT_GITHUB_REV_MESSAGE}
                 onChange={(e) => setInputRev(e.target.value)}
               />
@@ -158,18 +177,15 @@ const ModuleInfo = () => {
               <span className="self-center w-14">Subdir :</span>
               <Input
                 className="flex-1 items-center"
-                style={{ width: "calc(100% - 8px)" }}
-                defaultValue={subdir ? subdir : ""}
+                style={{ width: 'calc(100% - 8px)' }}
+                defaultValue={subdir ? subdir : ''}
                 placeholder={DEFAULT_GITHUB_SUBDIR_MESSAGE}
                 onChange={(e) => setInputSubdir(e.target.value)}
               />
             </div>
           </div>
           <div className="flex justify-end mt-4">
-            <Button
-              type="primary"
-              onClick={() => verifyGithub()}
-            >
+            <Button type="primary" onClick={() => verifyGithub()}>
               Verify
             </Button>
           </div>
@@ -177,27 +193,35 @@ const ModuleInfo = () => {
         </>
       )}
       <div className="flex flex-row ">
-        <h4 className='pr-2'> Bytecode </h4>
-        <Button type="ghost" style={{width: '1em', height: '1em'}}  icon={<CopyOutlined />} />
+        <h4 className="pr-2"> Bytecode </h4>
+        <Button
+          type="ghost"
+          style={{ width: '1em', height: '1em' }}
+          icon={<CopyOutlined />}
+        />
       </div>
       <Input.TextArea
-        style={{ width: "calc(100% - 8px)" }}
-        value={bytecode.join("")}
+        style={{ width: 'calc(100% - 8px)' }}
+        value={bytecode.join('')}
         autoSize={{ minRows: 6, maxRows: 6 }}
       />
       <Divider />
       <h4> Friends </h4>
-      {friends ? `[${friends.join(",")}]` : NO_DATA_MESSAGE}
+      {friends ? `[${friends.join(',')}]` : NO_DATA_MESSAGE}
       <Divider />
       <div className="flex justify-end">
         {!hasAuth ? (
           <div />
         ) : !isEditing ? (
-          <Button style={{ width: "auto"}} type="primary" onClick={() => checkOwner()}>
+          <Button
+            style={{ width: 'auto' }}
+            type="primary"
+            onClick={() => checkOwner()}
+          >
             Set Information
           </Button>
         ) : (
-          <div className='flex'>
+          <div className="flex">
             <Button
               className="mx-1"
               danger
@@ -218,6 +242,6 @@ const ModuleInfo = () => {
       </div>
     </MainContainer>
   );
-}
+};
 
 export default ModuleInfo;

@@ -6,7 +6,7 @@ import type {
 import { useCallback, useEffect } from 'react';
 import { atom, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { MoveModule } from 'src/MoveFunction';
-import Container from '~common/components/Container';
+import PageContainer from '~common/components/PageContainer';
 import Abi from '~modules/components/Abi';
 import Functions from '~modules/components/Functions';
 import ModuleInfo from '~modules/components/ModuleInfo';
@@ -63,7 +63,7 @@ const ModuleDetail = ({
   }, [data, resetModule, setModule, updateAuth]);
 
   return (
-    <Container className="gap-4">
+    <PageContainer className="gap-4">
       <h1>
         Module:{' '}
         <Skeleton
@@ -106,7 +106,7 @@ const ModuleDetail = ({
           ]}
         />
       </div>
-    </Container>
+    </PageContainer>
   );
 };
 

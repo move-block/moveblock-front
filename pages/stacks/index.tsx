@@ -1,7 +1,7 @@
 import React from 'react';
 import CheckAuth from '~common/components/CheckAuth';
 import Unconnected from '~stacks/components/Unconnected';
-import Container from '~common/components/Container';
+import PageContainer from '~common/components/PageContainer';
 import { MoreOutlined, PlusCircleFilled } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import Link from 'next/link';
@@ -22,7 +22,7 @@ const StacksPage = () => {
   });
 
   return (
-    <Container>
+    <PageContainer>
       <h1 className="uppercase">Block Stacks</h1>
       <div className="flex flex-wrap gap-4 justify-around">
         <Link href="/stacks/create">
@@ -77,7 +77,7 @@ const StacksPage = () => {
           </Link>
         ))}
       </div>
-    </Container>
+    </PageContainer>
   );
 };
 

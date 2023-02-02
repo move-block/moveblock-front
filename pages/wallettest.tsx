@@ -1,5 +1,5 @@
 import { Button, Input } from 'antd';
-import Container from '~common/components/Container';
+import PageContainer from '~common/components/PageContainer';
 import CenterContainer from '~common/components/CenterContainer';
 import { useState } from 'react';
 import usePetraWallet, { TransactionPayload } from '~common/hooks/useWallet';
@@ -94,14 +94,14 @@ const WalletSignTest3 = () => {
 
 const ConnectWallet = () => {
   return (
-    <Container className="max-w-3xl">
+    <PageContainer className="max-w-3xl">
       <CenterContainer>
         <Authtest />
         <WalletSignTest />
         <WalletSignTest2 />
         <WalletSignTest3 />
       </CenterContainer>
-    </Container>
+    </PageContainer>
   );
 };
 
