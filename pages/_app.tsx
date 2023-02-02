@@ -15,6 +15,7 @@ import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
 
 
 import '~styles/globals.css';
+import Footer from '~common/components/Footer';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -85,6 +86,7 @@ export default function App({
                   {getLayout(<Component {...pageProps} />)}
                 </Content>
               </Layout>
+              <Footer />
             </Typography>
           </ConfigProvider>
         </StyleProvider>
