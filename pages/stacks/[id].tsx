@@ -4,7 +4,6 @@ import type {
   InferGetServerSidePropsType,
 } from 'next/types';
 import { useEffect, useState } from 'react';
-import { MoveBlock, MoveBlockPreview } from 'src/MoveFunction';
 import Container from '~common/components/Container';
 import useStack from '~stacks/hooks/useStack';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
@@ -13,9 +12,14 @@ import { PlusCircleFilled } from '@ant-design/icons';
 import useWallet from '~common/hooks/useWallet';
 import StackFunctionItem from '~stacks/components/StackFunctionItem';
 
+export type BlockFormType = {
+  functionName: string;
+  paramValues: string[];
+  genericParamValues: string[];
+};
 export type FormType = {
   stackName: string;
-  blocks: (MoveBlockPreview | MoveBlock)[];
+  blocks: BlockFormType[];
 };
 
 const EMPTY_FORM: FormType = {
@@ -61,7 +65,14 @@ const StackDetailPage = ({
   useEffect(() => {
     if (stack) {
       setValue('stackName', stack.stackName);
-      replaceBlock(stack.blocks.slice());
+      console.log('stack', stack.blocks);
+      replaceBlock(
+        stack.blocks.map(({ functionName, params, genericTypeParams }) => ({
+          functionName,
+          paramValues: params.map(({ value }) => value),
+          genericParamValues: genericTypeParams.map(({ value }) => value),
+        }))
+      );
     } else {
       resetForm(EMPTY_FORM);
     }
@@ -139,37 +150,17 @@ const StackDetailPage = ({
         </div>
       </div>
       <div className="flex flex-col gap-4">
-        {(isEditing ? editingBlocks : stack?.blocks || []).map(
-          (block, index) => (
+        {editingBlocks.map(
+          ({ functionName, paramValues, genericParamValues }, index) => (
             <StackFunctionItem
               key={`${id}-${index}`}
-              block={block as MoveBlock}
               isEditing={isEditing}
               control={control}
               functionIndex={index}
               onRemove={() => removeBlock(index)}
-              updateDetail={(blockData, functionDetail) => {
-                const description = functionDetail?.description || '';
-                const params = blockData.params.map(({ value }, index) => ({
-                  value,
-                  type: functionDetail?.params[index].type || '',
-                  name: functionDetail?.params[index].name || '',
-                }));
-                const genericTypeParams = blockData.genericTypeParams.map(
-                  ({ value }, index) => ({
-                    value,
-                    ability:
-                      functionDetail?.genericTypeParams?.[index]?.ability || '',
-                  })
-                );
-
-                setValue(`blocks.${index}.description`, description);
-                setValue(`blocks.${index}.params`, params);
-                setValue(
-                  `blocks.${index}.genericTypeParams`,
-                  genericTypeParams
-                );
-              }}
+              functionName={functionName}
+              paramValues={paramValues}
+              genericParamValues={genericParamValues}
             />
           )
         )}
@@ -179,14 +170,9 @@ const StackDetailPage = ({
           onClick={() =>
             appendBlock({
               functionName: 'new block',
-              description: 'should be selected from the list',
-              params: [
-                {
-                  type: 'string',
-                  name: 'param1 description',
-                },
-              ],
-            } as MoveBlock)
+              paramValues: [],
+              genericParamValues: [],
+            })
           }
         >
           <HoverableItemContainer
