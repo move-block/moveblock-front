@@ -67,14 +67,12 @@ const StackEditor = ({ id }: { id?: number }) => {
       return;
     }
 
-    if (id) {
-      const isSuccess = await updateStack({
-        stack,
-      });
+    const isSuccess = await updateStack({
+      stack,
+    });
 
-      if (isSuccess) {
-        setIsEditing(false);
-      }
+    if (isSuccess) {
+      setIsEditing(false);
     }
   });
 

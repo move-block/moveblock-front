@@ -6,17 +6,26 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { address, ...params } = req.query;
-  const searchParams = new URLSearchParams(params as Record<string, string>);
-  const response = await fetch(
-    `${API_BASE_URL}/block-stacks/${address}?${searchParams}`,
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        'aptos-auth': address as string,
-      },
-    }
-  );
-  const data = await response.json();
+  const url = `${API_BASE_URL}/block-stacks/${address}`;
+  const headers = {
+    'Content-Type': 'application/json',
+    'aptos-auth': address as string,
+  };
 
-  res.status(200).json(data);
+  if (req.method === 'GET') {
+    const searchParams = new URLSearchParams(params as Record<string, string>);
+    const response = await fetch(`${url}?${searchParams}`, {
+      headers,
+    });
+    const data = await response.json();
+
+    res.status(200).json(data);
+  } else if (req.method === 'POST') {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(req.body),
+    });
+    res.status(response.status).end();
+  }
 }
