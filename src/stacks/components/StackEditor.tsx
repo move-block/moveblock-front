@@ -1,7 +1,7 @@
 import { LeftOutlined, PlusCircleFilled } from '@ant-design/icons';
 import { Skeleton } from 'antd';
 import Link from 'next/link';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import PageContainer from '~common/components/PageContainer';
 import HoverableItemContainer from '~common/components/HoverableItemContainer';
@@ -13,9 +13,8 @@ import FunctionModal from './FunctionModal';
 import StackFunctionItem from './StackFunctionItem';
 import StackTitle from './StackTitle';
 import ExecutionModal from '~stacks/components/ExecutionModal';
-import usePetraWallet from '~common/hooks/useWallet';
-import executeStack from '~stacks/hooks/executeStack';
 import { useRouter } from 'next/router';
+import useStackExecution from '~stacks/hooks/useStackExecution';
 
 export type BlockFormType = {
   functionName: string;
@@ -26,12 +25,6 @@ export type FormType = {
   stackName: string;
   blocks: BlockFormType[];
 };
-
-declare enum ExecutionStatus {
-  IDLE,
-  EXECUTING,
-  EXECUTED,
-}
 
 const getEmptyForm = (): FormType => ({
   stackName: 'New Stack',
@@ -113,40 +106,16 @@ const StackEditor = ({ id }: { id?: number }) => {
     }
   };
 
-  const [executionStatus, setExecutionStatus] = useState<ExecutionStatus>(
-    ExecutionStatus.IDLE
-  );
   const [isExecutionModalOpen, setIsExecutionModalOpen] = useState(false);
-
-  const [byteCode, setByteCode] = useState<string | null>(null);
-  const [transactionHash, setTransactionHash] = useState<string | null>(null);
-
-  const { getSignMessagePayload } = usePetraWallet();
-  const { getBytecode, execute } = executeStack();
-
-  const onClickExecute = async () => {
-    if (!id || !address) {
-      return;
-    }
-
-    setExecutionStatus(ExecutionStatus.EXECUTING);
-    const byteCode = await getBytecode(address, id);
-    if (byteCode === null || byteCode === undefined || byteCode === '') {
-      alert('Execution failed');
-      return;
-    }
-    setByteCode(byteCode);
-    const sign = await getSignMessagePayload(byteCode);
-    if (sign == null) return;
-
-    // TODO show spinner
-    const result = await execute(address, id);
-    setTransactionHash(result);
-    setExecutionStatus(ExecutionStatus.EXECUTED);
-    setIsExecutionModalOpen(true);
-
-    console.log(result);
-  };
+  const {
+    executionStatus,
+    byteCode,
+    transactionHash,
+    execute: executeStack,
+  } = useStackExecution({
+    id,
+    address,
+  });
 
   useEffect(() => {
     if (stack) {
@@ -200,7 +169,11 @@ const StackEditor = ({ id }: { id?: number }) => {
               disabled={isNew}
               type="primary"
               size="middle"
-              onClick={onClickExecute}
+              onClick={async () => {
+                const executionResult = await executeStack();
+                console.log('executionResult', executionResult);
+                setIsExecutionModalOpen(true);
+              }}
             >
               Execute
             </Button>
