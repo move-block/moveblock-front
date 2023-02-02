@@ -13,9 +13,19 @@ import { DefaultContainerProps } from '~common/components/ContainerProps';
 
 const Button = (props: any) => {
   return (
-    <AntdButton  style={{height: "26px", width: "83px", fontSize: "12px", display: "flex", justifyContent: "center", alignItems: "center"}} {...props} />
-  )
-}
+    <AntdButton
+      style={{
+        height: '26px',
+        width: '83px',
+        fontSize: '12px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+      {...props}
+    />
+  );
+};
 
 const FunctionItem = ({
   name,
@@ -106,7 +116,7 @@ const FunctionItem = ({
             <Input.TextArea
               autoFocus
               placeholder="Description about this function"
-              className={isEditing ? "" : "hidden"}
+              className={isEditing ? '' : 'hidden'}
               {...field}
             />
           )}
@@ -119,7 +129,7 @@ const FunctionItem = ({
           </div>
           <div className="flex flex-col flex-[1_0_100px]">
             <h4>is_entry</h4>
-            <div>{isEntry ? "true" : "false"}</div>
+            <div>{isEntry ? 'true' : 'false'}</div>
           </div>
           <div className="flex flex-col flex-[2_0_auto]">
             <h4>return</h4>
@@ -140,7 +150,7 @@ const FunctionItem = ({
                       control={control}
                       render={({ field }) => (
                         <Input
-                          className={twMerge(isEditing ? "" : "hidden", "w-30")}
+                          className={twMerge(isEditing ? '' : 'hidden', 'w-30')}
                           placeholder="Name of this generic param"
                           {...field}
                         />
@@ -166,7 +176,7 @@ const FunctionItem = ({
                   control={control}
                   render={({ field }) => (
                     <Input
-                      className={twMerge(isEditing ? "" : "hidden", "w-60")}
+                      className={twMerge(isEditing ? '' : 'hidden', 'w-60')}
                       placeholder="Name of this param"
                       {...field}
                     />
