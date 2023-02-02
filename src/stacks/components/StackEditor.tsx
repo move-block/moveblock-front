@@ -29,7 +29,7 @@ const getEmptyForm = (stack?: MoveStack): FormType => {
       blocks: stack.blocks.map(
         ({ functionName, params, genericTypeParams }) => ({
           functionName,
-          paramValues: params.slice(1).map(({ value }) => value),
+          paramValues: params.map(({ value }) => value),
           genericParamValues: genericTypeParams.map(({ value }) => value),
         })
       ),
