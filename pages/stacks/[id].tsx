@@ -145,7 +145,6 @@ const StackDetailPage = ({
               key={`${id}-${index}`}
               block={block as MoveBlock}
               isEditing={isEditing}
-              defaultIsOpen={isEditing || index === 0}
               control={control}
               functionIndex={index}
               onRemove={() => removeBlock(index)}

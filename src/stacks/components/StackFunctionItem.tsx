@@ -8,7 +8,6 @@ import { FormType } from '~pages/stacks/[id]';
 
 const StackFunctionItem = ({
   block,
-  defaultIsOpen,
   isEditing,
   control,
   functionIndex,
@@ -16,7 +15,6 @@ const StackFunctionItem = ({
   updateDetail,
 }: {
   block: MoveBlock;
-  defaultIsOpen: boolean;
   isEditing: boolean;
   control: Control<FormType>;
   functionIndex: number;
@@ -28,15 +26,11 @@ const StackFunctionItem = ({
 }) => {
   const { functionName, description, params, genericTypeParams } = block;
 
-  const [isOpen, setIsOpen] = useState(defaultIsOpen);
+  const [isOpen, setIsOpen] = useState(true);
   const toggleOpen = () => setIsOpen(!isOpen);
 
   const { data: functionInfo, isLoading: isFunctionInfoLoading } =
     useFunction(functionName);
-
-  useEffect(() => {
-    setIsOpen(defaultIsOpen);
-  }, [defaultIsOpen]);
 
   useEffect(() => {
     updateDetail(block, functionInfo || undefined);
