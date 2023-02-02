@@ -6,6 +6,7 @@ import Container from '~common/components/Container';
 import HoverableItemContainer from '~common/components/HoverableItemContainer';
 import useWallet from '~common/hooks/useWallet';
 import useStack from '~stacks/hooks/useStack';
+import useStackMutation from '~stacks/hooks/useStackMutation';
 import FunctionModal from './FunctionModal';
 import StackFunctionItem from './StackFunctionItem';
 
@@ -27,12 +28,13 @@ const EMPTY_FORM: FormType = {
 const StackEditor = ({ id }: { id?: number }) => {
   const [isEditing, setIsEditing] = useState(id ? false : true);
   const { account } = useWallet();
+  const address = account?.address;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: stack, isLoading } = useStack({
     id,
-    address: account?.address,
+    address,
   });
 
   const {
@@ -55,10 +57,40 @@ const StackEditor = ({ id }: { id?: number }) => {
     name: 'blocks',
   });
 
-  const onClickSave = handleSubmit((data) => {
-    console.log(data);
-    setIsEditing(false);
+  const { update: updateStack, delete: deleteStack } = useStackMutation({
+    id,
+    address,
   });
+
+  const onClickSave = handleSubmit(async (stack) => {
+    if (!address) {
+      return;
+    }
+
+    if (id) {
+      const isSuccess = await updateStack({
+        stack,
+      });
+
+      if (isSuccess) {
+        setIsEditing(false);
+      }
+    }
+  });
+
+  const onClickDelete = async () => {
+    if (!address) {
+      return;
+    }
+
+    if (id) {
+      const isSuccess = await deleteStack();
+
+      if (isSuccess) {
+        setIsEditing(false);
+      }
+    }
+  };
 
   useEffect(() => {
     if (stack) {
@@ -106,7 +138,12 @@ const StackEditor = ({ id }: { id?: number }) => {
         <div className="flex gap-2">
           {isEditing ? (
             <>
-              <Button type="primary" danger className="border-none h-fit py-0">
+              <Button
+                type="primary"
+                danger
+                className="border-none h-fit py-0"
+                onClick={() => onClickDelete()}
+              >
                 Delete
               </Button>
               <Button
