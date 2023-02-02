@@ -229,7 +229,7 @@ const StackEditor = ({ id }: { id?: number }) => {
           const fullFunctionName = `${accountAddress}::${moduleName}::${functionName}`;
           appendBlock({
             functionName: fullFunctionName,
-            paramValues: new Array(paramLength).fill(''),
+            paramValues: new Array(paramLength - 1).fill(''), // -1 because the first param is the &signer
             genericParamValues: new Array(genericParamLength).fill(''),
           });
         }}
