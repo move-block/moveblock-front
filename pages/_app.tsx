@@ -81,7 +81,7 @@ export default function App({
               <Typography>
                 <Layout className="min-h-screen">
                   <Gnb />
-                  <Content className="flex-1 flex flex-col items-stretch">
+                  <Content className="flex-1 flex flex-col items-stretch px-[50px] max-sm:px-2">
                     {getLayout(<Component {...pageProps} />)}
                   </Content>
                   <Footer />
