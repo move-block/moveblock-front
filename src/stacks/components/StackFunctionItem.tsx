@@ -10,7 +10,7 @@ import { JsonViewer } from '@textea/json-viewer';
 import { BlockFormType } from './StackEditor';
 import Button from '~common/components/Button';
 
-enum SimulationStatus {
+enum BlockStatus {
   NOT_CHANGED,
   CHANGED,
   SIMULATION_SUCCESS,
@@ -79,13 +79,11 @@ const StackFunctionItem = ({
     return functionName || dirtyParamCount > 0 || dirtyGenericCount > 0;
   }, [dirtyFields.blocks, functionIndex, getValues]);
 
-  const [simulationStatus, setSimulationStatus] = useState<SimulationStatus>(
-    isDirty ? SimulationStatus.CHANGED : SimulationStatus.NOT_CHANGED
+  const [blockStatus, setBlockStatus] = useState<BlockStatus>(
+    isDirty ? BlockStatus.CHANGED : BlockStatus.NOT_CHANGED
   );
   useEffect(() => {
-    setSimulationStatus(
-      isDirty ? SimulationStatus.CHANGED : SimulationStatus.NOT_CHANGED
-    );
+    setBlockStatus(isDirty ? BlockStatus.CHANGED : BlockStatus.NOT_CHANGED);
   }, [isDirty]);
 
   const { data: functionInfo, isLoading: isFunctionInfoLoading } =
@@ -105,10 +103,10 @@ const StackFunctionItem = ({
 
     const result = await simulateFunction(payload);
     if (result?.success) {
-      setSimulationStatus(SimulationStatus.SIMULATION_SUCCESS);
+      setBlockStatus(BlockStatus.SIMULATION_SUCCESS);
       setSimulationResult(result.events);
     } else {
-      setSimulationStatus(SimulationStatus.SIMULATION_FAIL);
+      setBlockStatus(BlockStatus.SIMULATION_FAIL);
     }
   };
 
@@ -180,7 +178,7 @@ const StackFunctionItem = ({
           </div>
         </div>
       ) : null}
-      {simulationStatus === SimulationStatus.SIMULATION_SUCCESS && (
+      {simulationResult && (
         <div>
           <h4>
             Changes <CheckCircleTwoTone twoToneColor="#597EF7" />
@@ -195,7 +193,7 @@ const StackFunctionItem = ({
           />
         </div>
       )}
-      {simulationStatus === SimulationStatus.SIMULATION_FAIL && (
+      {blockStatus === BlockStatus.SIMULATION_FAIL && (
         <div>
           <h4>
             Changes <CloseCircleTwoTone twoToneColor="#eb2f96" />
@@ -204,22 +202,22 @@ const StackFunctionItem = ({
         </div>
       )}
       <div className="mt-2 flex justify-end gap-2">
-        {simulationStatus === SimulationStatus.CHANGED && (
+        {blockStatus === BlockStatus.CHANGED && (
           <Button type="default" size="small" onClick={onReset}>
             Cancel
           </Button>
         )}
-        {simulationStatus !== SimulationStatus.CHANGED && (
+        {blockStatus !== BlockStatus.CHANGED && (
           <Button type="danger" size="small" onClick={onRemove}>
             Delete
           </Button>
         )}
-        {simulationStatus === SimulationStatus.CHANGED && (
+        {blockStatus === BlockStatus.CHANGED && (
           <Button type="primary" size="small" onClick={handleSimulate}>
             Simulate
           </Button>
         )}
-        {simulationStatus === SimulationStatus.SIMULATION_SUCCESS && (
+        {blockStatus === BlockStatus.SIMULATION_SUCCESS && (
           <Button type="primary" size="small" onClick={onSave}>
             Set Block
           </Button>
