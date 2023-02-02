@@ -6,8 +6,8 @@ import CollapsableItemContainer from '~common/components/CollapsableItemContaine
 import { parseFullFunctionName } from '~modules/hooks/fetchFunctionDetail';
 import useFunction from '~modules/hooks/useFunction';
 import useWallet, { TransactionPayload } from '~common/hooks/useWallet';
-import { BlockFormType, FormType } from '~pages/stacks/[id]';
 import { JsonViewer } from '@textea/json-viewer';
+import { FormType, BlockFormType } from './StackEditor';
 
 enum CheckStatus {
   NOT_CHECKED,
