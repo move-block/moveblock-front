@@ -16,7 +16,6 @@ enum CheckStatus {
 }
 
 const StackFunctionItem = ({
-  isEditing,
   control,
   functionIndex,
   onRemove,
@@ -25,12 +24,12 @@ const StackFunctionItem = ({
   genericParamValues,
   getValues,
 }: {
-  isEditing: boolean;
   control: Control<FormType>;
   functionIndex: number;
   onRemove: () => void;
   getValues: () => BlockFormType;
 } & BlockFormType) => {
+  const [isEditing, setIsEditing] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const toggleOpen = () => setIsOpen(!isOpen);
   const { simulateFunction } = useWallet();
@@ -157,26 +156,23 @@ const StackFunctionItem = ({
           Simulation failed
         </div>
       )}
-
-      {isEditing && (
-        <div className="mt-2 flex justify-end gap-2">
-          <Button
-            type="primary"
-            danger
-            className="border-none h-fit py-0"
-            onClick={onRemove}
-          >
-            Delete
-          </Button>
-          <Button
-            type="primary"
-            className="border-none h-fit py-0"
-            onClick={handleSimulate}
-          >
-            Simulate
-          </Button>
-        </div>
-      )}
+      <div className="mt-2 flex justify-end gap-2">
+        <Button
+          type="primary"
+          danger
+          className="border-none h-fit py-0"
+          onClick={onRemove}
+        >
+          Delete
+        </Button>
+        <Button
+          type="primary"
+          className="border-none h-fit py-0"
+          onClick={handleSimulate}
+        >
+          Simulate
+        </Button>
+      </div>
     </CollapsableItemContainer>
   );
 };

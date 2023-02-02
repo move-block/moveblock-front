@@ -40,7 +40,6 @@ const getEmptyForm = (): FormType => ({
 
 const StackEditor = ({ id }: { id?: number }) => {
   const isNew = !id;
-  const [isEditing, setIsEditing] = useState(id ? false : true);
   const { account } = useWallet();
   const address = account?.address;
   const router = useRouter();
@@ -89,12 +88,10 @@ const StackEditor = ({ id }: { id?: number }) => {
     try {
       if (isNew) {
         await createStack({ stack });
-        setIsEditing(false);
         // should redirect to the new stack with edit mode
         router.replace('/stacks');
       } else {
         await updateStack({ stack });
-        setIsEditing(false);
       }
     } catch (e) {
       console.error(e);
@@ -108,7 +105,6 @@ const StackEditor = ({ id }: { id?: number }) => {
 
     try {
       await deleteStack();
-      setIsEditing(false);
       router.replace('/stacks');
     } catch (e) {
       console.error(e);
@@ -214,7 +210,6 @@ const StackEditor = ({ id }: { id?: number }) => {
           ({ functionName, paramValues, genericParamValues }, index) => (
             <StackFunctionItem
               key={`${id}-${index}`}
-              isEditing={isEditing}
               control={control}
               functionIndex={index}
               onRemove={() => removeBlock(index)}
@@ -226,22 +221,20 @@ const StackEditor = ({ id }: { id?: number }) => {
           )
         )}
       </div>
-      {isEditing && (
-        <button onClick={() => setIsModalOpen(true)}>
-          <HoverableItemContainer
-            className="flex flex-col gap-4 h-[198px]"
-            _hover={
-              <h2 className="text-inherit">
-                Add a new
-                <br />
-                Block
-              </h2>
-            }
-          >
-            <PlusCircleFilled className="text-primary text-[60px]" />
-          </HoverableItemContainer>
-        </button>
-      )}
+      <button onClick={() => setIsModalOpen(true)}>
+        <HoverableItemContainer
+          className="flex flex-col gap-4 h-[198px]"
+          _hover={
+            <h2 className="text-inherit">
+              Add a new
+              <br />
+              Block
+            </h2>
+          }
+        >
+          <PlusCircleFilled className="text-primary text-[60px]" />
+        </HoverableItemContainer>
+      </button>
       <FunctionModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
