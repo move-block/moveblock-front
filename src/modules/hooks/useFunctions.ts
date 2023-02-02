@@ -19,7 +19,7 @@ const useFunctions = ({
         limit,
       },
     ],
-    queryFn: () => fetchFunctions({ keyword, offset, limit }),
+    queryFn: () => fetchFunctions({ keyword, offset, limit, isEntry }),
     keepPreviousData: true,
   });
 

@@ -10,7 +10,7 @@ interface FunctionPostParams {
 
 type FunctionQueryParams = PaginatedQueryProps & {
   keyword: string;
-  is_entry: boolean;
+  is_entry: string;
 };
 
 export default async function handler(
@@ -35,7 +35,7 @@ export default async function handler(
     );
     const response = await fetch(
       `${API_BASE_URL}/functions${
-        is_entry ? '/entry-functions' : ''
+        is_entry === 'true' ? '/entry-functions' : ''
       }?${searchParams}`
     );
     const data = await response.json();
