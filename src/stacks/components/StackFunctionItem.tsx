@@ -1,6 +1,6 @@
 import { Skeleton, Input } from 'antd';
 import { CheckCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import CollapsableItemContainer from '~common/components/CollapsableItemContainer';
 import { parseFullFunctionName } from '~modules/hooks/fetchFunctionDetail';
@@ -10,10 +10,11 @@ import { JsonViewer } from '@textea/json-viewer';
 import { BlockFormType } from './StackEditor';
 import Button from '~common/components/Button';
 
-enum CheckStatus {
-  NOT_CHECKED,
-  SUCCESS,
-  FAIL,
+enum SimulationStatus {
+  NOT_CHANGED,
+  CHANGED,
+  SIMULATION_SUCCESS,
+  SIMULATION_FAIL,
 }
 
 const StackFunctionItem = ({
@@ -33,9 +34,7 @@ const StackFunctionItem = ({
   const [isOpen, setIsOpen] = useState(true);
   const toggleOpen = () => setIsOpen(!isOpen);
   const { simulateFunction } = useWallet();
-  const [simulationStatus, setSimulationStatus] = useState<CheckStatus>(
-    CheckStatus.NOT_CHECKED
-  );
+
   const [simulationResult, setSimulationResult] = useState('');
 
   const {
@@ -67,6 +66,17 @@ const StackFunctionItem = ({
     return functionName || dirtyParamCount > 0 || dirtyGenericCount > 0;
   }, [dirtyFields.blocks, functionIndex]);
 
+  const [simulationStatus, setSimulationStatus] = useState<SimulationStatus>(
+    isDirty ? SimulationStatus.CHANGED : SimulationStatus.NOT_CHANGED
+  );
+  useEffect(() => {
+    if (isDirty) {
+      setSimulationStatus(SimulationStatus.CHANGED);
+    } else {
+      setSimulationStatus(SimulationStatus.NOT_CHANGED);
+    }
+  }, [isDirty]);
+
   const { data: functionInfo, isLoading: isFunctionInfoLoading } =
     useFunction(functionName);
 
@@ -83,11 +93,11 @@ const StackFunctionItem = ({
     };
 
     const result = await simulateFunction(payload);
-    if (result != null && result.success) {
-      setSimulationStatus(CheckStatus.SUCCESS);
+    if (result?.success) {
+      setSimulationStatus(SimulationStatus.SIMULATION_SUCCESS);
       setSimulationResult(result.events);
     } else {
-      setSimulationStatus(CheckStatus.FAIL);
+      setSimulationStatus(SimulationStatus.SIMULATION_FAIL);
     }
   };
 
@@ -159,7 +169,7 @@ const StackFunctionItem = ({
           </div>
         </div>
       ) : null}
-      {simulationStatus === CheckStatus.SUCCESS && (
+      {simulationStatus === SimulationStatus.SIMULATION_SUCCESS && (
         <div>
           <h4>
             Changes <CheckCircleTwoTone twoToneColor="#597EF7" />
@@ -174,7 +184,7 @@ const StackFunctionItem = ({
           />
         </div>
       )}
-      {simulationStatus === CheckStatus.FAIL && (
+      {simulationStatus === SimulationStatus.SIMULATION_FAIL && (
         <div>
           <h4>
             Changes <CloseCircleTwoTone twoToneColor="#eb2f96" />
@@ -183,25 +193,25 @@ const StackFunctionItem = ({
         </div>
       )}
       <div className="mt-2 flex justify-end gap-2">
-        {isDirty ? (
+        {simulationStatus === SimulationStatus.CHANGED && (
           <Button type="default" size="small" onClick={onReset}>
             Cancel
           </Button>
-        ) : (
+        )}
+        {simulationStatus !== SimulationStatus.CHANGED && (
           <Button type="danger" size="small" onClick={onRemove}>
             Delete
           </Button>
         )}
-        {isDirty ? (
+        {simulationStatus === SimulationStatus.CHANGED && (
           <Button type="primary" size="small" onClick={handleSimulate}>
             Simulate
           </Button>
-        ) : (
-          (paramValues.length > 0 || genericParamValues.length > 0) && (
-            <Button type="primary" size="small" onClick={onSave}>
-              Set Block
-            </Button>
-          )
+        )}
+        {simulationStatus === SimulationStatus.SIMULATION_SUCCESS && (
+          <Button type="primary" size="small" onClick={onSave}>
+            Set Block
+          </Button>
         )}
       </div>
     </CollapsableItemContainer>
