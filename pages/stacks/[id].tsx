@@ -42,6 +42,7 @@ const StackDetailPage = ({
     control,
     handleSubmit,
     setValue,
+    getValues,
     reset: resetForm,
   } = useForm<FormType>({
     defaultValues: EMPTY_FORM,
@@ -161,6 +162,7 @@ const StackDetailPage = ({
               functionName={functionName}
               paramValues={paramValues}
               genericParamValues={genericParamValues}
+              getValues={() => getValues(`blocks.${index}`)}
             />
           )
         )}

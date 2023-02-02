@@ -1,9 +1,18 @@
 import { Skeleton, Input, Button } from 'antd';
+import { CheckCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons';
 import { useState } from 'react';
 import { Control, Controller } from 'react-hook-form';
 import CollapsableItemContainer from '~common/components/CollapsableItemContainer';
 import useFunction from '~modules/hooks/useFunction';
+import useWallet, {TransactionPayload} from "~common/hooks/useWallet";
 import { BlockFormType, FormType } from '~pages/stacks/[id]';
+import { JsonViewer } from '@textea/json-viewer';
+
+enum CheckStatus{
+  NOT_CHECKED,
+  SUCCESS,
+  FAIL
+}
 
 const StackFunctionItem = ({
   isEditing,
@@ -13,17 +22,42 @@ const StackFunctionItem = ({
   functionName,
   paramValues,
   genericParamValues,
+  getValues,
 }: {
   isEditing: boolean;
   control: Control<FormType>;
   functionIndex: number;
   onRemove: () => void;
+  getValues: () => BlockFormType;
 } & BlockFormType) => {
   const [isOpen, setIsOpen] = useState(true);
   const toggleOpen = () => setIsOpen(!isOpen);
+  const { simulateFunction } = useWallet();
+  /*0: 안한거, 1: 한거, 2: 실패한거*/
+  const [simulationStatus, setSimulationStatus] = useState<CheckStatus>(CheckStatus.NOT_CHECKED);
+  const [simulationResult, setSimulationResult] = useState("");
 
   const { data: functionInfo, isLoading: isFunctionInfoLoading } =
     useFunction(functionName);
+
+  const handleSimulate = async () => {
+    const { functionName, paramValues, genericParamValues } = getValues();
+    console.log('simulate', functionName, paramValues, genericParamValues);
+
+    const payload : TransactionPayload = {
+      type_arguments: genericParamValues,
+      arguments: paramValues,
+      function: functionName
+    }
+
+    const result = await simulateFunction(payload);
+    if (result != null && result.success) {
+      setSimulationStatus(1);
+      setSimulationResult(result.events);
+    }else {
+      setSimulationStatus(2)
+    }
+  };
 
   return (
     <CollapsableItemContainer
@@ -91,6 +125,26 @@ const StackFunctionItem = ({
           ))}
         </div>
       </div>
+      {(simulationStatus === CheckStatus.SUCCESS) && (
+        <div>
+          <h4>Changes <CheckCircleTwoTone twoToneColor="#52c41a" /></h4>
+          <JsonViewer
+            enableClipboard={true}
+            value={simulationResult}
+            theme="dark"
+            style={{
+              backgroundColor: 'transparent',
+            }}
+          />
+        </div>
+      )}
+      {(simulationStatus === CheckStatus.FAIL) && (
+        <div>
+          <h4>Changes <CloseCircleTwoTone twoToneColor="#eb2f96" /></h4>
+          Simulation failed
+        </div>
+      )}
+
       {isEditing && (
         <div className="mt-2 flex justify-end gap-2">
           <Button
@@ -101,11 +155,16 @@ const StackFunctionItem = ({
           >
             Delete
           </Button>
-          <Button type="primary" className="border-none h-fit py-0">
+          <Button
+            type="primary"
+            className="border-none h-fit py-0"
+            onClick={handleSimulate}
+          >
             Simulate
           </Button>
         </div>
       )}
+
     </CollapsableItemContainer>
   );
 };

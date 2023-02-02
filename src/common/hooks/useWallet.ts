@@ -1,6 +1,5 @@
 import { useWallet, WalletReadyState } from '@aptos-labs/wallet-adapter-react';
 import { AptosClient } from 'aptos';
-import { API_BASE_URL } from '~consts';
 
 export const DEVNET_NODE_URL = 'https://fullnode.devnet.aptoslabs.com/v1';
 const aptosClient = new AptosClient(DEVNET_NODE_URL, {
@@ -14,7 +13,6 @@ const aptosClient = new AptosClient(DEVNET_NODE_URL, {
 }*/
 
 export interface TransactionPayload {
-  type: string;
   type_arguments: any[];
   arguments: any[];
   function: string;
@@ -96,7 +94,7 @@ const usePetraWallet = () => {
 
   const onSignAndSubmitTransaction = async (payload: TransactionPayload) => {
     try {
-      const response = await signAndSubmitTransaction(payload);
+      const response = await signAndSubmitTransaction({...payload, type: 'entry_function_payload'});
       await aptosClient.waitForTransaction(response?.hash || '');
       return {
         success: true,
@@ -128,14 +126,16 @@ const usePetraWallet = () => {
   */
   const simulateFunction = async (payload: TransactionPayload) => {
     const seq = await getSequenceNumber();
-    payload.type = 'entry_function_payload';
     const body = {
       sender: account?.address,
       sequence_number: seq,
       max_gas_amount: '2000000',
       gas_unit_price: '100',
       expiration_timestamp_secs: '32425224034',
-      payload: payload,
+      payload: {
+        ...payload,
+        type: 'entry_function_payload'
+      },
       signature: {
         type: 'ed25519_signature',
         public_key: account?.publicKey,
