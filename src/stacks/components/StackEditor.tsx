@@ -22,10 +22,25 @@ export type FormType = {
   blocks: BlockFormType[];
 };
 
-const getEmptyForm = (): FormType => ({
-  stackName: 'New Stack',
-  blocks: [],
-});
+const getEmptyForm = (stack?: MoveStack): FormType => {
+  if (stack) {
+    return {
+      stackName: stack.stackName,
+      blocks: stack.blocks.map(
+        ({ functionName, params, genericTypeParams }) => ({
+          functionName,
+          paramValues: params.slice(1).map(({ value }) => value),
+          genericParamValues: genericTypeParams.map(({ value }) => value),
+        })
+      ),
+    };
+  } else {
+    return {
+      stackName: 'New Stack',
+      blocks: [],
+    };
+  }
+};
 
 const StackEditor = ({
   stack,
@@ -54,10 +69,12 @@ const StackEditor = ({
     getValues,
     reset: resetForm,
     resetField,
-    formState: { isDirty },
+    formState: { isDirty, dirtyFields },
   } = useForm<FormType>({
-    defaultValues: getEmptyForm(),
+    defaultValues: getEmptyForm(stack),
   });
+
+  console.log('dirty', dirtyFields);
 
   const {
     fields: editingBlocks,
@@ -86,18 +103,7 @@ const StackEditor = ({
   };
 
   useEffect(() => {
-    if (stack) {
-      setValue('stackName', stack.stackName);
-      replaceBlock(
-        stack.blocks.map(({ functionName, params, genericTypeParams }) => ({
-          functionName,
-          paramValues: params.map(({ value }) => value),
-          genericParamValues: genericTypeParams.map(({ value }) => value),
-        }))
-      );
-    } else {
-      resetForm(getEmptyForm());
-    }
+    resetForm(getEmptyForm(stack));
   }, [replaceBlock, resetForm, setValue, stack]);
 
   return (
