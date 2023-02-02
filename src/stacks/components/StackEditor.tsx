@@ -57,7 +57,11 @@ const StackEditor = ({ id }: { id?: number }) => {
     name: 'blocks',
   });
 
-  const { update: updateStack, delete: deleteStack } = useStackMutation({
+  const {
+    create: createStack,
+    update: updateStack,
+    delete: deleteStack,
+  } = useStackMutation({
     id,
     address,
   });
@@ -67,26 +71,26 @@ const StackEditor = ({ id }: { id?: number }) => {
       return;
     }
 
-    const isSuccess = await updateStack({
-      stack,
-    });
+    const saveStack = id ? updateStack : createStack;
 
-    if (isSuccess) {
+    try {
+      await saveStack({ stack });
       setIsEditing(false);
+    } catch (e) {
+      console.error(e);
     }
   });
 
   const onClickDelete = async () => {
-    if (!address) {
+    if (!address || !id) {
       return;
     }
 
-    if (id) {
-      const isSuccess = await deleteStack();
-
-      if (isSuccess) {
-        setIsEditing(false);
-      }
+    try {
+      await deleteStack();
+      setIsEditing(false);
+    } catch (e) {
+      console.error(e);
     }
   };
 
