@@ -174,7 +174,7 @@ const ModuleInfo = () => {
       <h4> Friends </h4>
       {friends ? `[${friends.join(',')}]` : NO_DATA_MESSAGE}
       <Divider />
-      <div className="float-right">
+      <div className="flex justify-end">
       { 
         !hasAuth ? (<div/>) :
         !isEditing ? (
