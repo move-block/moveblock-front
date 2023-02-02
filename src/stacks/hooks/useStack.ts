@@ -11,7 +11,7 @@ const useStack = ({ id, address }: Partial<StackDetailQueryProps>) => {
 
   return {
     data,
-    isLoading,
+    isLoading: id ? isLoading : false,
   };
 };
 

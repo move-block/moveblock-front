@@ -1,5 +1,7 @@
+import StackEditor from '~stacks/components/StackEditor';
+
 const create = () => {
-  return <div>create</div>;
+  return <StackEditor />;
 };
 
 export default create;
