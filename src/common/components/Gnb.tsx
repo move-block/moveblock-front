@@ -28,7 +28,7 @@ const Gnb = () => {
     <Header className="max-sm:px-2 flex items-center justify-center gap-4 h-[110px]">
       <AptosWalletAdapterProvider plugins={wallets} autoConnect={true}>
       <Link href="/">
-        <Image src={LogoImage} alt="Move Block logo" width="32" height="32" />
+        <Image src={LogoImage} alt="Move Block logo"  />
       </Link>
       <Menu
         className="bg-transparent m-0 min-w-0 flex-auto"

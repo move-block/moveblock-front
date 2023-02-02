@@ -85,8 +85,9 @@ export default function App({
                 <Content className="flex-1 flex flex-col items-stretch">
                   {getLayout(<Component {...pageProps} />)}
                 </Content>
+                <Footer />
               </Layout>
-              <Footer />
+              
             </Typography>
           </ConfigProvider>
         </StyleProvider>

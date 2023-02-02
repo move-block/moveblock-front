@@ -104,8 +104,8 @@ const ModuleInfo = () => {
           {description ? description : NO_DATA_MESSAGE}
           <Divider />
           <div className="flex flex-row">
-            <h4>Github Dependency</h4>
-            <Button type="ghost" icon={<CopyOutlined />} />
+            <h4 className='pr-2'>Github Dependency</h4>
+            <Button type="ghost" style={{width: '1em', height: '1em'}}  icon={<CopyOutlined />} />
           </div>
           <Paragraph style={{ maxWidth: "calc(100% - 20px)", marginTop: 24 }}>
             <pre style={{ border: "none" }}>
@@ -176,9 +176,9 @@ const ModuleInfo = () => {
           <Divider />
         </>
       )}
-      <div className="flex flex-row">
-        <h4> Bytecode </h4>
-        <Button type="ghost" icon={<CopyOutlined />} />
+      <div className="flex flex-row ">
+        <h4 className='pr-2'> Bytecode </h4>
+        <Button type="ghost" style={{width: '1em', height: '1em'}}  icon={<CopyOutlined />} />
       </div>
       <Input.TextArea
         style={{ width: "calc(100% - 8px)" }}
