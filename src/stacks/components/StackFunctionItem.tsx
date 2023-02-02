@@ -137,7 +137,7 @@ const StackFunctionItem = ({
       {simulationStatus === CheckStatus.SUCCESS && (
         <div>
           <h4>
-            Changes <CheckCircleTwoTone twoToneColor="#52c41a" />
+            Changes <CheckCircleTwoTone twoToneColor="#597EF7" />
           </h4>
           <JsonViewer
             enableClipboard={true}

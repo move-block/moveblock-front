@@ -33,7 +33,8 @@ const useFunctionMutation = ({
       );
 
       if (!sign) {
-        throw new Error('Failed to sign message');
+        console.log('Sign is null');
+        return
       }
 
       const { payload, public_key } = sign;
