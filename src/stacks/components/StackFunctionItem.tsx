@@ -13,17 +13,25 @@ const StackFunctionItem = ({
   functionName,
   paramValues,
   genericParamValues,
+  getValues,
 }: {
   isEditing: boolean;
   control: Control<FormType>;
   functionIndex: number;
   onRemove: () => void;
+  getValues: () => BlockFormType;
 } & BlockFormType) => {
   const [isOpen, setIsOpen] = useState(true);
   const toggleOpen = () => setIsOpen(!isOpen);
 
   const { data: functionInfo, isLoading: isFunctionInfoLoading } =
     useFunction(functionName);
+
+  const handleSimulate = async () => {
+    const { functionName, paramValues, genericParamValues } = getValues();
+
+    console.log('simulate', functionName, paramValues, genericParamValues);
+  };
 
   return (
     <CollapsableItemContainer
@@ -101,7 +109,11 @@ const StackFunctionItem = ({
           >
             Delete
           </Button>
-          <Button type="primary" className="border-none h-fit py-0">
+          <Button
+            type="primary"
+            className="border-none h-fit py-0"
+            onClick={handleSimulate}
+          >
             Simulate
           </Button>
         </div>
