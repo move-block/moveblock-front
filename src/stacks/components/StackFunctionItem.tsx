@@ -48,7 +48,6 @@ const StackFunctionItem = ({
 
   const handleSimulate = async () => {
     const { functionName, paramValues, genericParamValues } = getValues();
-    console.log('simulate', functionName, paramValues, genericParamValues);
 
     const payload: TransactionPayload = {
       type_arguments: genericParamValues,
@@ -58,10 +57,10 @@ const StackFunctionItem = ({
 
     const result = await simulateFunction(payload);
     if (result != null && result.success) {
-      setSimulationStatus(1);
+      setSimulationStatus(CheckStatus.SUCCESS);
       setSimulationResult(result.events);
     } else {
-      setSimulationStatus(2);
+      setSimulationStatus(CheckStatus.FAIL);
     }
   };
 
