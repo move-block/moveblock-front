@@ -9,6 +9,7 @@ import useStacks from '~stacks/hooks/useStacks';
 import { Spin } from 'antd';
 import HoverableItemContainer from '~common/components/HoverableItemContainer';
 import useWallet from '~common/hooks/useWallet';
+import { parseFullFunctionName } from '~modules/hooks/fetchFunctionDetail';
 
 const MAX_BLOCKS_TRIM = 4;
 const StacksPage = () => {
@@ -59,7 +60,7 @@ const StacksPage = () => {
                           key={`${id}-${index}`}
                           className="bg-[#262626] py-1 px-2 rounded-[12px]"
                         >
-                          {functionName}
+                          {parseFullFunctionName(functionName)?.functionName}
                         </div>
                       ))}
                     {blocks.length > MAX_BLOCKS_TRIM && (

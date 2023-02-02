@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 const searchPath = '/modules';
 const searchQuery = 'keyword';
 
-const Search = () => {
+const Search = ({ onSearch }: { onSearch?: (keyword: string) => void }) => {
   const router = useRouter();
 
   const defaultValue = useMemo(() => {
@@ -17,6 +17,13 @@ const Search = () => {
     return router.query[searchQuery];
   }, [router.pathname, router.query]);
 
+  const handleSearch =
+    onSearch ||
+    ((value) => {
+      const queryString = value ? `?${searchQuery}=${value}` : '';
+      router.push(searchPath + queryString);
+    });
+
   return (
     <Input.Search
       size="large"
@@ -24,10 +31,7 @@ const Search = () => {
       allowClear
       enterButton={<SearchOutlined />}
       defaultValue={defaultValue}
-      onSearch={(value) => {
-        const queryString = value ? `?${searchQuery}=${value}` : '';
-        router.push(searchPath + queryString);
-      }}
+      onSearch={handleSearch}
     />
   );
 };

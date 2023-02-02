@@ -5,16 +5,33 @@ export interface QueryProps {
   fullFunctionName: string;
 }
 
-const fetchFunctionDetail = async ({ fullFunctionName }: QueryProps) => {
+export const parseFullFunctionName = (fullFunctionName: string) => {
   const functionParseRegex = /0x(\w+)::(\w+)::(\w+)/; // 0xAddress::module::function
 
   const parseResult = functionParseRegex.exec(fullFunctionName);
   if (!parseResult) {
-    throw new Error('Invalid function name');
+    return null;
   }
 
   const [, address, moduleName, functionName] = parseResult;
   const fullAddress = `0x${address.padStart(64, '0')}`;
+
+  return {
+    address,
+    fullAddress,
+    moduleName,
+    functionName,
+  };
+};
+
+const fetchFunctionDetail = async ({ fullFunctionName }: QueryProps) => {
+  const parseResult = parseFullFunctionName(fullFunctionName);
+
+  if (!parseResult) {
+    return null;
+  }
+
+  const { fullAddress, moduleName, functionName } = parseResult;
 
   const response = await fetch(
     `/api/functions/${fullAddress}/${moduleName}/${functionName}`

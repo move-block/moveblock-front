@@ -1,6 +1,7 @@
-import { MoveFunction } from 'src/MoveFunction';
+import { MoveFunctionWithDetail } from 'src/MoveFunction';
 import type {
   AccountRawData,
+  MoveFunctionDetailRawData,
   MoveFunctionRawData,
   PaginatedQueryProps,
 } from '../../Api';
@@ -11,7 +12,8 @@ export interface QueryProps extends PaginatedQueryProps {
 
 interface Data {
   module_function: MoveFunctionRawData;
-  account_detail: null | AccountRawData;
+  account_detail?: AccountRawData;
+  function_detail?: MoveFunctionDetailRawData;
 }
 
 const fetchFunctions = async (queryProps: QueryProps) => {
@@ -34,8 +36,11 @@ const fetchFunctions = async (queryProps: QueryProps) => {
           name,
           visibility,
           is_entry,
+          params,
+          generic_type_params,
         },
         account_detail,
+        function_detail,
       }) => ({
         id,
         name,
@@ -48,8 +53,13 @@ const fetchFunctions = async (queryProps: QueryProps) => {
           address: account_detail?.address || module_address,
           alias: account_detail?.alias || '',
         },
+        description: function_detail?.description || '',
+        params: params.map((type) => ({ type })),
+        genericTypeParams: generic_type_params.map((ability) => ({
+          ability: JSON.stringify(ability),
+        })),
       })
-    ) as MoveFunction[],
+    ) as MoveFunctionWithDetail[],
   };
 };
 
