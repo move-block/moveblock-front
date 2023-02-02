@@ -1,13 +1,13 @@
 import { Skeleton, Input } from 'antd';
 import { CheckCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons';
-import { useState } from 'react';
-import { Control, Controller } from 'react-hook-form';
+import { useMemo, useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
 import CollapsableItemContainer from '~common/components/CollapsableItemContainer';
 import { parseFullFunctionName } from '~modules/hooks/fetchFunctionDetail';
 import useFunction from '~modules/hooks/useFunction';
 import useWallet, { TransactionPayload } from '~common/hooks/useWallet';
 import { JsonViewer } from '@textea/json-viewer';
-import { FormType, BlockFormType } from './StackEditor';
+import { BlockFormType } from './StackEditor';
 import Button from '~common/components/Button';
 
 enum CheckStatus {
@@ -17,33 +17,55 @@ enum CheckStatus {
 }
 
 const StackFunctionItem = ({
-  control,
   functionIndex,
   onRemove,
+  onSave,
+  onReset,
   functionName,
   paramValues,
   genericParamValues,
-  getValues,
-  onSave,
-  onReset,
-  isDirty = false,
 }: {
-  control: Control<FormType>;
   functionIndex: number;
-  getValues: () => BlockFormType;
   onRemove: () => Promise<void>;
   onSave: () => Promise<void>;
   onReset: () => Promise<void>;
-  isDirty: boolean;
 } & BlockFormType) => {
   const [isOpen, setIsOpen] = useState(true);
   const toggleOpen = () => setIsOpen(!isOpen);
   const { simulateFunction } = useWallet();
-  /*0: 안한거, 1: 한거, 2: 실패한거*/
   const [simulationStatus, setSimulationStatus] = useState<CheckStatus>(
     CheckStatus.NOT_CHECKED
   );
   const [simulationResult, setSimulationResult] = useState('');
+
+  const {
+    control,
+    getValues: getFormValues,
+    formState: { dirtyFields },
+  } = useFormContext();
+
+  const getValues = () => getFormValues(`blocks.${functionIndex}`);
+  const isDirty = useMemo(() => {
+    const blockDirtyFields = dirtyFields.blocks?.[functionIndex] as Partial<
+      Readonly<{
+        functionName?: boolean | undefined;
+        paramValues?: boolean[] | undefined;
+        genericParamValues?: boolean[] | undefined;
+      }>
+    >;
+    if (!blockDirtyFields) {
+      return false;
+    }
+
+    const { functionName, paramValues, genericParamValues } = blockDirtyFields;
+    const dirtyParamCount = (paramValues || []).filter(
+      (value) => !!value
+    ).length;
+    const dirtyGenericCount = (genericParamValues || []).filter(
+      (value) => !!value
+    ).length;
+    return functionName || dirtyParamCount > 0 || dirtyGenericCount > 0;
+  }, [dirtyFields.blocks, functionIndex]);
 
   const { data: functionInfo, isLoading: isFunctionInfoLoading } =
     useFunction(functionName);
