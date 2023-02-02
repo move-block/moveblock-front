@@ -2,12 +2,14 @@ import { Button as AndButton } from 'antd';
 
 const Button = ({
   type,
+  size,
+  disabled,
   onClick,
   children,
-  size,
 }: {
   type: 'primary' | 'default' | 'danger';
   size: 'middle' | 'small';
+  disabled?: boolean;
   onClick?: () => void;
   children: React.ReactNode;
 }) => {
@@ -15,6 +17,7 @@ const Button = ({
     <AndButton
       type={type === 'default' ? 'default' : 'primary'}
       danger={type === 'danger'}
+      disabled={disabled}
       className={
         size === 'small'
           ? 'h-[26px] min-w-[5rem] px-6 text-footnote flex justify-center items-center border-none'

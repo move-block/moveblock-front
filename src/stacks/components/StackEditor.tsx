@@ -38,6 +38,7 @@ const getEmptyForm = (): FormType => ({
 });
 
 const StackEditor = ({ id }: { id?: number }) => {
+  const isNew = !id;
   const [isEditing, setIsEditing] = useState(id ? false : true);
   const { account } = useWallet();
   const address = account?.address;
@@ -170,51 +171,33 @@ const StackEditor = ({ id }: { id?: number }) => {
             isLoading={isLoading}
             value={stack?.stackName || ''}
             onSave={onClickSave}
-            isNew={!id}
+            isNew={isNew}
           />
         </div>
         <div className="flex gap-2">
-          {isEditing ? (
-            <>
-              <Button
-                type="danger"
-                size="middle"
-                onClick={() => onClickDelete()}
-              >
-                Delete
-              </Button>
-              <Button
-                type="default"
-                size="middle"
-                onClick={() => setIsEditing(false)}
-              >
-                Cancel
-              </Button>
-              <Button type="primary" size="middle" onClick={onClickSave}>
-                Save Stack
-              </Button>
-            </>
+          {isLoading ? (
+            <Skeleton.Button active />
           ) : (
-            <>
-              {isLoading ? (
-                <Skeleton.Button active />
-              ) : (
-                <Button
-                  type="default"
-                  size="middle"
-                  onClick={() => setIsEditing(true)}
-                >
-                  Edit
-                </Button>
-              )}
-              {isLoading ? (
-                <Skeleton.Button active />
-              ) : (
-                <Button type="primary" size="middle" onClick={onClickExecute}>
-                  Execute
-                </Button>
-              )}
-            </>
+            <Button
+              disabled={isNew}
+              type="danger"
+              size="middle"
+              onClick={() => onClickDelete()}
+            >
+              Delete
+            </Button>
+          )}
+          {isLoading ? (
+            <Skeleton.Button active />
+          ) : (
+            <Button
+              disabled={isNew}
+              type="primary"
+              size="middle"
+              onClick={onClickExecute}
+            >
+              Execute
+            </Button>
           )}
         </div>
       </div>
