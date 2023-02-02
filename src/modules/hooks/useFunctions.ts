@@ -1,10 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import fetchFunctions, { QueryProps } from './fetchFunctions';
 
-const useFunctions = ({ keyword, offset, limit }: QueryProps) => {
+const useFunctions = ({
+  keyword,
+  offset,
+  limit,
+  isEntry = false,
+}: QueryProps & {
+  isEntry?: boolean;
+}) => {
   const { data, isLoading } = useQuery({
     queryKey: [
       'functions',
+      isEntry,
       {
         keyword,
         offset,
