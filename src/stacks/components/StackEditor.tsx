@@ -2,7 +2,7 @@ import { PlusCircleFilled } from '@ant-design/icons';
 import { Input, Skeleton, Button } from 'antd';
 import { useState, useEffect } from 'react';
 import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import Container from '~common/components/Container';
+import PageContainer from '~common/components/PageContainer';
 import HoverableItemContainer from '~common/components/HoverableItemContainer';
 import useWallet from '~common/hooks/useWallet';
 import useStack from '~stacks/hooks/useStack';
@@ -154,7 +154,7 @@ const StackEditor = ({ id }: { id?: number }) => {
   }, [replaceBlock, resetForm, setValue, stack]);
 
   return (
-    <Container>
+    <PageContainer>
       <div className="flex justify-between items-end">
         {isEditing ? (
           <Controller
@@ -290,7 +290,7 @@ const StackEditor = ({ id }: { id?: number }) => {
         byteCode={byteCode}
         transactionHash={transactionHash}
       />
-    </Container>
+    </PageContainer>
   );
 };
 

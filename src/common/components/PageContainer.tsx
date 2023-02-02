@@ -1,7 +1,7 @@
 import { twMerge } from 'tailwind-merge';
 import { DefaultContainerProps } from './ContainerProps';
 
-const Container = ({
+const PageContainer = ({
   children,
   className,
   ...props
@@ -19,4 +19,4 @@ const Container = ({
   );
 };
 
-export default Container;
+export default PageContainer;

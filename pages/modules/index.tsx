@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Visibility } from 'src/MoveFunction';
-import Container from '~common/components/Container';
+import PageContainer from '~common/components/PageContainer';
 import { truncateWalletAddress } from '~common/utils';
 
 import Search from '~modules/components/Search';
@@ -104,7 +104,7 @@ const Modules = () => {
   }, [keyword]);
 
   return (
-    <Container>
+    <PageContainer>
       <h1 className="uppercase">Module Explorer</h1>
       <Search />
       <Table
@@ -124,7 +124,7 @@ const Modules = () => {
         current={page}
         onChange={(page) => setPage(page)}
       />
-    </Container>
+    </PageContainer>
   );
 };
 

@@ -1,6 +1,6 @@
 import { Button, Typography } from 'antd';
 import Link from 'next/link';
-import Container from '~common/components/Container';
+import PageContainer from '~common/components/PageContainer';
 import Search from '~modules/components/Search';
 import Image from 'next/image';
 import Logo from '~public/logo_main.png';
@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <div className="flex flex-1 flex-row justify-center items-center w-full max-w-8xl px-[80px]">
       <div className="flex-1">
-        <Container className="max-w-2xl gap-[16px] justify-center flex">
+        <PageContainer className="max-w-2xl gap-[16px] justify-center flex">
           <h1 className="uppercase text-6xl text-white">
             Build Your Own
             <br />
@@ -34,7 +34,7 @@ export default function Home() {
               </Button>
             </Link>
           </div>
-        </Container>
+        </PageContainer>
       </div>
 
       <div className="flex-1">
