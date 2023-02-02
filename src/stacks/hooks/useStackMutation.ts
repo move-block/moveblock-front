@@ -41,7 +41,9 @@ const useStackMutation = ({
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['stacks', address]);
+      queryClient.invalidateQueries({
+        queryKey: ['stacks', address],
+      });
     },
   });
 
@@ -62,7 +64,9 @@ const useStackMutation = ({
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['stacks', address, id]);
+      queryClient.invalidateQueries({
+        queryKey: ['stacks', address, id],
+      });
     },
   });
 
@@ -81,7 +85,9 @@ const useStackMutation = ({
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['stacks']);
+      queryClient.invalidateQueries({
+        queryKey: ['stacks', address],
+      });
     },
   });
 

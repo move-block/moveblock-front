@@ -5,7 +5,6 @@ interface MutationProps {
   accountAddress: string;
   moduleName: string;
   functionName: string;
-  
 }
 
 interface FunctionContent {
@@ -23,12 +22,16 @@ const useFunctionMutation = ({
   const queryClient = new QueryClient();
 
   const mutation = useMutation({
-    mutationFn: async ({ description, paramNames, genericParams }: FunctionContent) => {
+    mutationFn: async ({
+      description,
+      paramNames,
+      genericParams,
+    }: FunctionContent) => {
       const sign = await getSignMessagePayload(
         JSON.stringify({
           description,
           param_names: paramNames,
-          generic_type_params: genericParams
+          generic_type_params: genericParams,
         })
       );
 
@@ -52,7 +55,9 @@ const useFunctionMutation = ({
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["functions"]);
+      queryClient.invalidateQueries({
+        queryKey: ['functions'],
+      });
     },
   });
 
