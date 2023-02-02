@@ -1,7 +1,7 @@
 import { LeftOutlined, PlusCircleFilled } from '@ant-design/icons';
 import { Skeleton } from 'antd';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import PageContainer from '~common/components/PageContainer';
 import HoverableItemContainer from '~common/components/HoverableItemContainer';
@@ -26,16 +26,16 @@ export type FormType = {
   blocks: BlockFormType[];
 };
 
-const EMPTY_FORM: FormType = {
-  stackName: '',
-  blocks: [],
-};
-
 declare enum ExecutionStatus {
   IDLE,
   EXECUTING,
   EXECUTED,
 }
+
+const getEmptyForm = (): FormType => ({
+  stackName: 'New Stack',
+  blocks: [],
+});
 
 const StackEditor = ({ id }: { id?: number }) => {
   const [isEditing, setIsEditing] = useState(id ? false : true);
@@ -56,7 +56,7 @@ const StackEditor = ({ id }: { id?: number }) => {
     getValues,
     reset: resetForm,
   } = useForm<FormType>({
-    defaultValues: EMPTY_FORM,
+    defaultValues: getEmptyForm(),
   });
 
   const {
@@ -152,7 +152,7 @@ const StackEditor = ({ id }: { id?: number }) => {
         }))
       );
     } else {
-      resetForm(EMPTY_FORM);
+      resetForm(getEmptyForm());
     }
   }, [replaceBlock, resetForm, setValue, stack]);
 
@@ -170,6 +170,7 @@ const StackEditor = ({ id }: { id?: number }) => {
             isLoading={isLoading}
             value={stack?.stackName || ''}
             onSave={onClickSave}
+            isNew={!id}
           />
         </div>
         <div className="flex gap-2">

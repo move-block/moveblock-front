@@ -8,13 +8,15 @@ const StackTitle = ({
   isLoading,
   value,
   onSave,
+  isNew = false,
 }: {
   control: any;
   isLoading: boolean;
   value: string;
   onSave: () => Promise<void>;
+  isNew?: boolean;
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(isNew ? true : false);
 
   const onSubmit = async () => {
     try {
