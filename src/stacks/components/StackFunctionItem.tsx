@@ -1,4 +1,4 @@
-import { Skeleton, Input, Button } from 'antd';
+import { Skeleton, Input } from 'antd';
 import { CheckCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons';
 import { useState } from 'react';
 import { Control, Controller } from 'react-hook-form';
@@ -8,6 +8,7 @@ import useFunction from '~modules/hooks/useFunction';
 import useWallet, { TransactionPayload } from '~common/hooks/useWallet';
 import { JsonViewer } from '@textea/json-viewer';
 import { FormType, BlockFormType } from './StackEditor';
+import Button from '~common/components/Button';
 
 enum CheckStatus {
   NOT_CHECKED,
@@ -23,13 +24,18 @@ const StackFunctionItem = ({
   paramValues,
   genericParamValues,
   getValues,
+  onSave,
+  onReset,
+  isDirty = false,
 }: {
   control: Control<FormType>;
   functionIndex: number;
-  onRemove: () => void;
   getValues: () => BlockFormType;
+  onRemove: () => Promise<void>;
+  onSave: () => Promise<void>;
+  onReset: () => Promise<void>;
+  isDirty: boolean;
 } & BlockFormType) => {
-  const [isEditing, setIsEditing] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const toggleOpen = () => setIsOpen(!isOpen);
   const { simulateFunction } = useWallet();
@@ -98,7 +104,6 @@ const StackFunctionItem = ({
                     <Input
                       className={'w-60'}
                       placeholder={functionInfo?.params[index + 1]?.name}
-                      disabled={!isEditing}
                       {...field}
                     />
                   )}
@@ -123,7 +128,6 @@ const StackFunctionItem = ({
                       placeholder={
                         functionInfo?.genericTypeParams?.[index]?.name
                       }
-                      disabled={!isEditing}
                       {...field}
                     />
                   )}
@@ -157,21 +161,24 @@ const StackFunctionItem = ({
         </div>
       )}
       <div className="mt-2 flex justify-end gap-2">
-        <Button
-          type="primary"
-          danger
-          className="border-none h-fit py-0"
-          onClick={onRemove}
-        >
-          Delete
-        </Button>
-        <Button
-          type="primary"
-          className="border-none h-fit py-0"
-          onClick={handleSimulate}
-        >
-          Simulate
-        </Button>
+        {isDirty ? (
+          <Button type="default" size="small" onClick={onReset}>
+            Cancel
+          </Button>
+        ) : (
+          <Button type="danger" size="small" onClick={onRemove}>
+            Delete
+          </Button>
+        )}
+        {isDirty ? (
+          <Button type="primary" size="small" onClick={handleSimulate}>
+            Simulate
+          </Button>
+        ) : (
+          <Button type="primary" size="small" onClick={onSave}>
+            Set Block
+          </Button>
+        )}
       </div>
     </CollapsableItemContainer>
   );

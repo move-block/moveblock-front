@@ -57,6 +57,8 @@ const StackEditor = ({ id }: { id?: number }) => {
     setValue,
     getValues,
     reset: resetForm,
+    resetField,
+    formState: { isDirty },
   } = useForm<FormType>({
     defaultValues: getEmptyForm(),
   });
@@ -212,11 +214,19 @@ const StackEditor = ({ id }: { id?: number }) => {
               key={`${id}-${index}`}
               control={control}
               functionIndex={index}
-              onRemove={() => removeBlock(index)}
+              onRemove={async () => {
+                removeBlock(index);
+                await onClickSave();
+              }}
               functionName={functionName}
               paramValues={paramValues}
               genericParamValues={genericParamValues}
               getValues={() => getValues(`blocks.${index}`)}
+              onSave={onClickSave}
+              onReset={async () => {
+                resetField(`blocks.${index}`);
+              }}
+              isDirty={isDirty}
             />
           )
         )}
