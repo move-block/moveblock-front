@@ -199,6 +199,12 @@ const StackEditor = ({
               paramValues: new Array(paramLength - 1).fill(''), // -1 because the first param is the &signer
               genericParamValues: new Array(genericParamLength).fill(''),
             });
+
+            const isWithoutParams =
+              paramLength - 1 === 0 && genericParamLength === 0;
+            if (isWithoutParams) {
+              onClickSave();
+            }
           }}
         />
       </FormProvider>
