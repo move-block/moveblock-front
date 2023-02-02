@@ -1,6 +1,6 @@
 import { Skeleton, Input } from 'antd';
 import { CheckCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import CollapsableItemContainer from '~common/components/CollapsableItemContainer';
 import { parseFullFunctionName } from '~modules/hooks/fetchFunctionDetail';
@@ -43,7 +43,10 @@ const StackFunctionItem = ({
     formState: { dirtyFields },
   } = useFormContext();
 
-  const getValues = () => getFormValues(`blocks.${functionIndex}`);
+  const getValues = useCallback<() => BlockFormType>(
+    () => getFormValues(`blocks.${functionIndex}`),
+    [functionIndex, getFormValues]
+  );
   const isDirty = useMemo(() => {
     const blockDirtyFields = dirtyFields.blocks?.[functionIndex] as Partial<
       Readonly<{
@@ -56,6 +59,16 @@ const StackFunctionItem = ({
       return false;
     }
 
+    const {
+      isNew,
+      paramValues: { length: paramValuesLength },
+      genericParamValues: { length: genericParamValuesLength },
+    } = getValues();
+
+    if (isNew && paramValuesLength === 0 && genericParamValuesLength === 0) {
+      return false;
+    }
+
     const { functionName, paramValues, genericParamValues } = blockDirtyFields;
     const dirtyParamCount = (paramValues || []).filter(
       (value) => !!value
@@ -64,17 +77,15 @@ const StackFunctionItem = ({
       (value) => !!value
     ).length;
     return functionName || dirtyParamCount > 0 || dirtyGenericCount > 0;
-  }, [dirtyFields.blocks, functionIndex]);
+  }, [dirtyFields.blocks, functionIndex, getValues]);
 
   const [simulationStatus, setSimulationStatus] = useState<SimulationStatus>(
     isDirty ? SimulationStatus.CHANGED : SimulationStatus.NOT_CHANGED
   );
   useEffect(() => {
-    if (isDirty) {
-      setSimulationStatus(SimulationStatus.CHANGED);
-    } else {
-      setSimulationStatus(SimulationStatus.NOT_CHANGED);
-    }
+    setSimulationStatus(
+      isDirty ? SimulationStatus.CHANGED : SimulationStatus.NOT_CHANGED
+    );
   }, [isDirty]);
 
   const { data: functionInfo, isLoading: isFunctionInfoLoading } =

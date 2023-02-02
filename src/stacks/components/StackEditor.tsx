@@ -16,6 +16,7 @@ export type BlockFormType = {
   functionName: string;
   paramValues: string[];
   genericParamValues: string[];
+  isNew?: boolean;
 };
 export type FormType = {
   stackName: string;
@@ -198,6 +199,7 @@ const StackEditor = ({
               functionName: fullFunctionName,
               paramValues: new Array(paramLength - 1).fill(''), // -1 because the first param is the &signer
               genericParamValues: new Array(genericParamLength).fill(''),
+              isNew: true,
             });
 
             const isWithoutParams =
