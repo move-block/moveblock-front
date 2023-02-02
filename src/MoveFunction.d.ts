@@ -30,6 +30,7 @@ type MoveFunctionParam = {
 type GenericTypeParam = {
   ability?: string;
   name?: string;
+  value?: string;
 };
 
 export interface MoveFunctionDetail {

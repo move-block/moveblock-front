@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import fetchFunction from './fetchFunctionDetail';
+import fetchFunctionDetail from './fetchFunctionDetail';
 
 const useFunction = (fullFunctionName: string) => {
   const { data, isLoading } = useQuery({
     queryKey: ['functionDetail', fullFunctionName],
-    queryFn: () => fetchFunction({ fullFunctionName }),
-    keepPreviousData: true,
+    queryFn: () => fetchFunctionDetail({ fullFunctionName }),
+    enabled: !!fullFunctionName,
   });
 
   return {
