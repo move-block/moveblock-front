@@ -21,7 +21,7 @@ const FunctionModal = ({
       footer={null}
       onCancel={onClose}
       closeIcon={<div />}
-      width="20%"
+      width="30%"
       className="overflow-auto"
     >
       <div className="flex flex-col gap-4">
@@ -30,14 +30,15 @@ const FunctionModal = ({
             <CloseOutlined />
           </button>
         </div>
-        <div className="flex flex-row">
+        <div className="flex flex-col items-center">
           <h4>
             <CheckCircleTwoTone twoToneColor="#597EF7" />
           </h4>
-          Transaction Success!
+          <p>Transaction Success!</p>
         </div>
         <div>
-          <a href={`https://explorer.aptoslabs.com/txn/${transactionHash}`} target="_blank">https://explorer.aptoslabs.com/txn/{transactionHash}</a>
+          <a href={`https://explorer.aptoslabs.com/txn/${transactionHash}`}
+             target="_blank" rel="noreferrer">https://explorer.aptoslabs.com/txn/{transactionHash}</a>
         </div>
         <div className="flex flex-row">
           <h4>Byte code</h4>
