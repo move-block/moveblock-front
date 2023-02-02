@@ -1,46 +1,29 @@
 import { Skeleton, Input, Button } from 'antd';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Control, Controller } from 'react-hook-form';
-import { MoveBlock, MoveFunctionWithDetail } from 'src/MoveFunction';
 import CollapsableItemContainer from '~common/components/CollapsableItemContainer';
 import useFunction from '~modules/hooks/useFunction';
-import { FormType } from '~pages/stacks/[id]';
+import { BlockFormType, FormType } from '~pages/stacks/[id]';
 
 const StackFunctionItem = ({
-  block,
-  defaultIsOpen,
   isEditing,
   control,
   functionIndex,
   onRemove,
-  updateDetail,
+  functionName,
+  paramValues,
+  genericParamValues,
 }: {
-  block: MoveBlock;
-  defaultIsOpen: boolean;
   isEditing: boolean;
   control: Control<FormType>;
   functionIndex: number;
   onRemove: () => void;
-  updateDetail: (
-    blockData: MoveBlock,
-    functionDetail?: MoveFunctionWithDetail
-  ) => void;
-}) => {
-  const { functionName, description, params, genericTypeParams } = block;
-
-  const [isOpen, setIsOpen] = useState(defaultIsOpen);
+} & BlockFormType) => {
+  const [isOpen, setIsOpen] = useState(true);
   const toggleOpen = () => setIsOpen(!isOpen);
 
   const { data: functionInfo, isLoading: isFunctionInfoLoading } =
     useFunction(functionName);
-
-  useEffect(() => {
-    setIsOpen(defaultIsOpen);
-  }, [defaultIsOpen]);
-
-  useEffect(() => {
-    updateDetail(block, functionInfo || undefined);
-  }, [block, functionInfo, updateDetail]);
 
   return (
     <CollapsableItemContainer
@@ -48,13 +31,13 @@ const StackFunctionItem = ({
       title={functionName}
       toggleOpen={toggleOpen}
       className="flex flex-col gap-4"
-      contentClassName="flex flex-col gap-2"
+      contentClassName="flex flex-col gap-4"
     >
-      {description && <div>{description}</div>}
+      {functionInfo?.description && <div>{functionInfo?.description}</div>}
       <div>
         <h4>params</h4>
         <div className="flex gap-x-8 gap-y-2 flex-wrap">
-          {params?.map(({ type: paramType, name: paramName }, index) => (
+          {paramValues?.map((_value, index) => (
             <div key={index} className="flex flex-col gap-1">
               <div>
                 <Skeleton
@@ -65,16 +48,16 @@ const StackFunctionItem = ({
                   paragraph={false}
                   loading={isFunctionInfoLoading}
                 >
-                  {paramType}
+                  {functionInfo?.params[index + 1]?.type}
                 </Skeleton>
               </div>
               <Controller
-                name={`blocks.${functionIndex}.params.${index}.value`}
+                name={`blocks.${functionIndex}.paramValues.${index}`}
                 control={control}
                 render={({ field }) => (
                   <Input
                     className={'w-60'}
-                    placeholder={paramName}
+                    placeholder={functionInfo?.params[index + 1]?.name}
                     disabled={!isEditing}
                     {...field}
                   />
@@ -82,9 +65,30 @@ const StackFunctionItem = ({
               />
             </div>
           ))}
-          {!params?.length && (
+          {!paramValues?.length && (
             <div className="text-footnote text-gray-300">(No params)</div>
           )}
+        </div>
+      </div>
+      <div>
+        <h4>generic type params</h4>
+        <div className="flex gap-x-8 gap-y-2 flex-wrap">
+          {genericParamValues?.map((_value, index) => (
+            <div key={index} className="flex flex-col gap-1">
+              <Controller
+                name={`blocks.${functionIndex}.genericParamValues.${index}`}
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    className={'w-60'}
+                    placeholder={functionInfo?.genericTypeParams?.[index]?.name}
+                    disabled={!isEditing}
+                    {...field}
+                  />
+                )}
+              />
+            </div>
+          ))}
         </div>
       </div>
       {isEditing && (

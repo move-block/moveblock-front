@@ -26,16 +26,19 @@ const fetchFunctionDetail = async ({ fullFunctionName }: QueryProps) => {
   }
 
   const {
-    module_function: { id, module_name },
+    module_function: { id, module_name, generic_type_params, params },
     function_detail,
   } = data as MoveFunctionWithDetailRawData;
 
-  const { function_name, description, param_names, generic_type_params } =
-    function_detail || {};
+  const {
+    description,
+    param_names,
+    generic_type_params: generic_param_names,
+  } = function_detail || {};
 
   return {
     id,
-    name: function_name,
+    name: functionName,
     module: {
       name: module_name,
     },
@@ -43,11 +46,13 @@ const fetchFunctionDetail = async ({ fullFunctionName }: QueryProps) => {
       address: fullAddress,
     },
     description,
-    params: (param_names || []).map((name) => {
-      return { name };
-    }),
+    params: (params || []).map((type, index) => ({
+      type,
+      name: param_names?.[index],
+    })),
     genericTypeParams: (generic_type_params || []).map((param, index) => ({
       ability: JSON.stringify(param),
+      name: generic_param_names?.[index],
     })),
   } as MoveFunctionWithDetail;
 };
