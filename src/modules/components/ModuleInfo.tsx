@@ -1,4 +1,4 @@
-import { Input, Divider as AntDivider, Button, Typography } from 'antd';
+import { Input, Divider as AntDivider, Button as AntdButton, Typography } from 'antd';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { moduleAtom } from '~pages/modules/[account]/[module]';
@@ -21,6 +21,12 @@ const DEFAULT_GITHUB_SUBDIR_MESSAGE = 'Set github subdir of source code file';
 const Divider = () => {
   return <AntDivider className="bg-[#F0F0F0] max-w-[100px] min-w-0" />;
 };
+
+const Button = (props: any) => {
+  return (
+    <AntdButton  style={{height: "26px", width: "83px", fontSize: "12px", display: "flex", justifyContent: "center", alignItems: "center"}} {...props} />
+  )
+}
 
 const githubDependency = (
   name: string,
@@ -161,7 +167,6 @@ const ModuleInfo = () => {
           </div>
           <div className="flex justify-end mt-4">
             <Button
-              className="justify-end"
               type="primary"
               onClick={() => verifyGithub()}
             >
@@ -188,11 +193,11 @@ const ModuleInfo = () => {
         {!hasAuth ? (
           <div />
         ) : !isEditing ? (
-          <Button type="primary" onClick={() => checkOwner()}>
+          <Button style={{ width: "auto"}} type="primary" onClick={() => checkOwner()}>
             Set Information
           </Button>
         ) : (
-          <div>
+          <div className='flex'>
             <Button
               className="mx-1"
               danger

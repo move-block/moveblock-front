@@ -51,7 +51,7 @@ const columns: ColumnsType<ModuleRowType> = [
     dataIndex: 'detailAddress',
     render: (detailAddress) => (
       <Link href={detailAddress}>
-        <Button type="primary">Detail</Button>
+        <Button style={{height: "26px", width: "83px", fontSize: "12px", display: "flex", justifyContent: "center", alignItems: "center"}} type="primary">Detail</Button>
       </Link>
     ),
     className: 'rounded-r-[10px]',
