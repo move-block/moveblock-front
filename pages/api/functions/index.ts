@@ -27,7 +27,7 @@ export default async function handler(
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: req.body,
+        body: JSON.stringify(req.body),
       }
     );
 

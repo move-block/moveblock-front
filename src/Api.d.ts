@@ -39,14 +39,19 @@ export interface ModuleRawData {
   inserted_at: string;
 }
 
-export interface MoveFunctionDetailRawData {
+export type MoveFunctionWithDetailRawData = {
+  module_function: MoveFunctionRawData;
+  function_detail: MoveFunctionDetailRawData | null;
+};
+
+interface MoveFunctionDetailRawData {
   id: number;
   address: string;
   module_name: string;
   function_name: string;
-  description: string;
-  param_names: string[];
-  generic_type_param_name: string[];
+  description: string | null;
+  param_names: string[] | null;
+  generic_type_params: string[] | null;
 }
 
 export interface MoveBlockRawData {

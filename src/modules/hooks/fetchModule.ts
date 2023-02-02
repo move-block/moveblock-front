@@ -2,8 +2,7 @@ import { MoveFunctionWithDetail } from 'src/MoveFunction';
 import {
   AccountRawData,
   ModuleRawData,
-  MoveFunctionRawData,
-  MoveFunctionDetailRawData,
+  MoveFunctionWithDetailRawData,
 } from '../../Api';
 
 export interface QueryProps {
@@ -17,10 +16,7 @@ interface Data {
     module_detail: any;
   };
   account_detail: null | AccountRawData;
-  functions_with_detail: Array<{
-    module_function: MoveFunctionRawData;
-    function_detail: MoveFunctionDetailRawData;
-  }>;
+  functions_with_detail: MoveFunctionWithDetailRawData[];
 }
 
 const fetchModule = async ({ moduleName, account }: QueryProps) => {
@@ -66,11 +62,11 @@ const fetchModule = async ({ moduleName, account }: QueryProps) => {
         isEntry: is_entry,
         genericTypeParams: generic_type_params.map((param, index) => ({
           ability: JSON.stringify(param),
-          name: function_detail?.generic_type_param_name[index],
+          name: function_detail?.generic_type_params?.[index],
         })),
         params: params.map((param, index) => ({
           type: param,
-          name: function_detail?.param_names[index],
+          name: function_detail?.param_names?.[index],
         })),
         returnTypes: return_types,
         module: {

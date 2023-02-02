@@ -17,7 +17,7 @@ const FunctionItem = ({
   visibility,
   isEntry,
   genericTypeParams = [],
-  params,
+  params = [],
   returnTypes,
   isSelected = false,
 }: MoveFunctionWithDetail & {
@@ -52,9 +52,11 @@ const FunctionItem = ({
     functionName: name,
   });
 
-  const checkOwner = async () => {
-    //TODO: need to be chagned here
-    (await checkAuth(address)) ? setIsEditing(true) : setIsEditing(false);
+  const handleClickEdit = async () => {
+    const isOwner = await checkAuth(address);
+    if (isOwner) {
+      setIsEditing(true);
+    }
   };
 
   const onClickSave = handleSubmit(
@@ -190,7 +192,7 @@ const FunctionItem = ({
             <Button
               type="primary"
               className="text-footnote py-[7px] px-[24px]"
-              onClick={() => checkOwner()}
+              onClick={() => handleClickEdit()}
             >
               Edit
             </Button>
