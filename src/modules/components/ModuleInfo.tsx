@@ -9,6 +9,7 @@ import useModuleMutation, {
   ModuleMutationOptions,
 } from '~modules/hooks/useModuleMutation';
 import MainContainer from '~common/components/MainContainer';
+import { CopyOutlined } from '@ant-design/icons';
 
 const NO_DATA_MESSAGE = 'No data';
 const DEFAULT_ADDRESS_MESSAGE = 'Set alias of address';
@@ -19,6 +20,15 @@ const DEFAULT_GITHUB_SUBDIR_MESSAGE = 'Set github subdir of source code file';
 
 const Divider = () => {
   return <AntDivider className="bg-[#F0F0F0] max-w-[100px] min-w-0" />;
+};
+
+const githubDependency = (
+  name: string,
+  github_url: string,
+  rev: string,
+  subdir: string
+) => {
+  return `[dependencies.${name}]\ngit = '${github_url}'\nrev = '${rev}'\nsubdir = '${subdir}'`;
 };
 
 const ModuleInfo = () => {
@@ -58,10 +68,6 @@ const ModuleInfo = () => {
     alert('Verify Success');
   };
 
-  const copyDependency = () => {
-    alert('Copy Success');
-  };
-
   const moduleMutation = useModuleMutation();
 
   const onSaveButtonClicked = async () => {
@@ -91,100 +97,108 @@ const ModuleInfo = () => {
           <h4> Description </h4>
           {description ? description : NO_DATA_MESSAGE}
           <Divider />
-          <h4>Github Dependency</h4>
-          <Paragraph style={{ maxWidth: 'calc(100% - 70px)', marginTop: 24 }}>
-            <pre style={{ border: 'none' }}>
-              {'[dependencies.' +
-                name +
-                ']\n' +
-                "git = '" +
-                (github_url ? github_url : '') +
-                "'" +
-                '\n' +
-                "rev = '" +
-                (rev ? rev : '') +
-                "'" +
-                '\n' +
-                "subdir = '" +
-                (subdir ? subdir : '') +
-                "'"}
+          <div className="flex flex-row">
+            <h4>Github Dependency</h4>
+            <Button type="ghost" icon={<CopyOutlined />} />
+          </div>
+          <Paragraph style={{ maxWidth: "calc(100% - 20px)", marginTop: 24 }}>
+            <pre style={{ border: "none" }}>
+              {githubDependency(name, github_url, rev, subdir)}
             </pre>
           </Paragraph>
-
-          <Button type="primary" onClick={copyDependency}>
-            Copy
-          </Button>
           <Divider />
         </>
       ) : (
         <>
-          <h4> Address </h4>
-          <Input
-            defaultValue={alias ? alias : ''}
-            placeholder={`${DEFAULT_ADDRESS_MESSAGE}`}
-            onChange={(e) => setInputAlias(e.target.value)}
-          />
-          {alias ? `${alias}(${address})` : address}
-          <Divider />
-          <h4> Description </h4>
-          <Input
-            defaultValue={description ? description : ''}
-            placeholder={DEFAULT_DESCRIPTION_MESSAGE}
-            onChange={(e) => setInputDescription(e.target.value)}
-          />
-          <Divider />
-          <h4> Github Dependency </h4>
-          URL :
-          <Input
-            style={{ width: 'calc(100% - 70px)' }}
-            defaultValue={github_url ? github_url : ''}
-            placeholder={DEFAULT_GITHUB_URL_MESSAGE}
-            onChange={(e) => setInputGithupUrl(e.target.value)}
-          />
-          <br />
-          Rev :
-          <Input
-            style={{ width: 'calc(100% - 70px)' }}
-            defaultValue={rev ? rev : ''}
-            placeholder={DEFAULT_GITHUB_REV_MESSAGE}
-            onChange={(e) => setInputRev(e.target.value)}
-          />
-          <br />
-          Subdir :
-          <Input
-            style={{ width: 'calc(100% - 70px)' }}
-            defaultValue={subdir ? subdir : ''}
-            placeholder={DEFAULT_GITHUB_SUBDIR_MESSAGE}
-            onChange={(e) => setInputSubdir(e.target.value)}
-          />
-          <br />
-          <Button type="primary" onClick={() => verifyGithub()}>
-            Verify
-          </Button>
+          <div className="flex flex-col">
+            <h4> Address </h4>
+            {alias ? `${alias}(${address})` : address}
+            <Input
+              defaultValue={alias ? alias : ""}
+              placeholder={`${DEFAULT_ADDRESS_MESSAGE}`}
+              onChange={(e) => setInputAlias(e.target.value)}
+            />
+            <Divider />
+            <h4> Description </h4>
+            <Input
+              defaultValue={description ? description : ""}
+              placeholder={DEFAULT_DESCRIPTION_MESSAGE}
+              onChange={(e) => setInputDescription(e.target.value)}
+            />
+            <Divider />
+            <h4> Github Dependency </h4>
+            <div className="flex">
+              <span className="self-center w-14">URL : </span>
+              <Input
+                className="flex-1 items-center"
+                defaultValue={github_url ? github_url : ""}
+                placeholder={DEFAULT_GITHUB_URL_MESSAGE}
+                onChange={(e) => setInputGithupUrl(e.target.value)}
+              />
+            </div>
+            <br />
+            <div className="flex">
+              <span className="self-center w-14">Rev :</span>
+              <Input
+                className="flex-1 items-center"
+                style={{ width: "calc(100% - 8px)" }}
+                defaultValue={rev ? rev : ""}
+                placeholder={DEFAULT_GITHUB_REV_MESSAGE}
+                onChange={(e) => setInputRev(e.target.value)}
+              />
+            </div>
+            <br />
+            <div className="flex">
+              <span className="self-center w-14">Subdir :</span>
+              <Input
+                className="flex-1 items-center"
+                style={{ width: "calc(100% - 8px)" }}
+                defaultValue={subdir ? subdir : ""}
+                placeholder={DEFAULT_GITHUB_SUBDIR_MESSAGE}
+                onChange={(e) => setInputSubdir(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end mt-4">
+            <Button
+              className="justify-end"
+              type="primary"
+              onClick={() => verifyGithub()}
+            >
+              Verify
+            </Button>
+          </div>
           <Divider />
         </>
       )}
-
-      <h4> Bytecode </h4>
+      <div className="flex flex-row">
+        <h4> Bytecode </h4>
+        <Button type="ghost" icon={<CopyOutlined />} />
+      </div>
       <Input.TextArea
-        value={bytecode.join('')}
+        style={{ width: "calc(100% - 8px)" }}
+        value={bytecode.join("")}
         autoSize={{ minRows: 6, maxRows: 6 }}
       />
       <Divider />
       <h4> Friends </h4>
-      {friends ? `[${friends.join(',')}]` : NO_DATA_MESSAGE}
+      {friends ? `[${friends.join(",")}]` : NO_DATA_MESSAGE}
       <Divider />
       <div className="flex justify-end">
-      { 
-        !hasAuth ? (<div/>) :
-        !isEditing ? (
-        <Button type="primary" onClick={() => checkOwner()}>
-          Set Information
-        </Button>
-        ) : 
-        (
+        {!hasAuth ? (
+          <div />
+        ) : !isEditing ? (
+          <Button type="primary" onClick={() => checkOwner()}>
+            Set Information
+          </Button>
+        ) : (
           <div>
-            <Button className="mx-1" danger onClick={() => setIsEditing(false)}>
+            <Button
+              className="mx-1"
+              danger
+              type="primary"
+              onClick={() => setIsEditing(false)}
+            >
               Cancel
             </Button>
             <Button
@@ -195,11 +209,10 @@ const ModuleInfo = () => {
               Save
             </Button>
           </div>
-        )
-      }
+        )}
       </div>
     </MainContainer>
-  )
+  );
 }
 
 export default ModuleInfo;
