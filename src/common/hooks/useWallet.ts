@@ -65,7 +65,7 @@ const usePetraWallet = () => {
   const checkAuthContains = async (moduleAddr: string) => {
     const address = account?.address;
     const response = await fetch(
-      `${API_BASE_URL}/accounts/${address}/contains/${moduleAddr} `
+      `/api/auth?accountAddress=${address}&moduleAddress=${moduleAddr}`
     );
     return await response.text();
   };
