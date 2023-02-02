@@ -1,7 +1,8 @@
-import { PlusCircleFilled } from '@ant-design/icons';
-import { Input, Skeleton } from 'antd';
+import { LeftOutlined, PlusCircleFilled } from '@ant-design/icons';
+import { Skeleton } from 'antd';
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import PageContainer from '~common/components/PageContainer';
 import HoverableItemContainer from '~common/components/HoverableItemContainer';
 import useWallet from '~common/hooks/useWallet';
@@ -10,6 +11,7 @@ import useStackMutation from '~stacks/hooks/useStackMutation';
 import Button from '../../common/components/Button';
 import FunctionModal from './FunctionModal';
 import StackFunctionItem from './StackFunctionItem';
+import StackTitle from './StackTitle';
 import ExecutionModal from '~stacks/components/ExecutionModal';
 import usePetraWallet from '~common/hooks/useWallet';
 import executeStack from '~stacks/hooks/executeStack';
@@ -157,31 +159,19 @@ const StackEditor = ({ id }: { id?: number }) => {
   return (
     <PageContainer>
       <div className="flex justify-between items-end">
-        {isEditing ? (
-          <Controller
-            name="stackName"
+        <div className="flex items-center gap-4">
+          <Link href="/stacks">
+            <button className="text-white hover:text-primary">
+              <LeftOutlined />
+            </button>
+          </Link>
+          <StackTitle
             control={control}
-            render={({ field }) => (
-              <Input
-                className="w-96 h-[70px] text-h1 font-bold"
-                placeholder="Stack Title"
-                {...field}
-              />
-            )}
+            isLoading={isLoading}
+            value={stack?.stackName || ''}
+            onSave={onClickSave}
           />
-        ) : (
-          <Skeleton
-            className="flex h-[70px] items-center"
-            active
-            title={{
-              width: '20rem',
-            }}
-            paragraph={false}
-            loading={isLoading}
-          >
-            <h1 className="mb-0">{stack?.stackName}</h1>
-          </Skeleton>
-        )}
+        </div>
         <div className="flex gap-2">
           {isEditing ? (
             <>
