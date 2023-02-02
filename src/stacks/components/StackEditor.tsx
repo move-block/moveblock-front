@@ -9,6 +9,9 @@ import useStack from '~stacks/hooks/useStack';
 import useStackMutation from '~stacks/hooks/useStackMutation';
 import FunctionModal from './FunctionModal';
 import StackFunctionItem from './StackFunctionItem';
+import ExecutionModal from '~stacks/components/ExecutionModal';
+import usePetraWallet from '~common/hooks/useWallet';
+import executeStack from '~stacks/hooks/executeStack';
 
 export type BlockFormType = {
   functionName: string;
@@ -24,6 +27,12 @@ const EMPTY_FORM: FormType = {
   stackName: '',
   blocks: [],
 };
+
+declare enum ExecutionStatus {
+  IDLE,
+  EXECUTING,
+  EXECUTED,
+}
 
 const StackEditor = ({ id }: { id?: number }) => {
   const [isEditing, setIsEditing] = useState(id ? false : true);
@@ -92,6 +101,41 @@ const StackEditor = ({ id }: { id?: number }) => {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const [executionStatus, setExecutionStatus] = useState<ExecutionStatus>(
+    ExecutionStatus.IDLE
+  );
+  const [isExecutionModalOpen, setIsExecutionModalOpen] = useState(false);
+
+  const [byteCode, setByteCode] = useState<string | null>(null);
+  const [transactionHash, setTransactionHash] = useState<string | null>(null);
+
+  const { getSignMessagePayload } = usePetraWallet();
+  const { getBytecode, execute } = executeStack();
+
+  const onClickExecute = async () => {
+    if (!id || !address) {
+      return;
+    }
+
+    setExecutionStatus(ExecutionStatus.EXECUTING);
+    const byteCode = await getBytecode(address, id);
+    if (byteCode === null || byteCode === undefined || byteCode === '') {
+      alert('Execution failed');
+      return;
+    }
+    setByteCode(byteCode);
+    const sign = await getSignMessagePayload(byteCode);
+    if (sign == null) return;
+
+    // TODO show spinner
+    const result = await execute(address, id);
+    setTransactionHash(result);
+    setExecutionStatus(ExecutionStatus.EXECUTED);
+    setIsExecutionModalOpen(true);
+
+    console.log(result);
   };
 
   useEffect(() => {
@@ -177,7 +221,11 @@ const StackEditor = ({ id }: { id?: number }) => {
               {isLoading ? (
                 <Skeleton.Button active />
               ) : (
-                <Button type="primary" className="border-none h-fit py-0">
+                <Button
+                  type="primary"
+                  className="border-none h-fit py-0"
+                  onClick={onClickExecute}
+                >
                   Execute
                 </Button>
               )}
@@ -235,6 +283,12 @@ const StackEditor = ({ id }: { id?: number }) => {
             genericParamValues: new Array(genericParamLength).fill(''),
           });
         }}
+      />
+      <ExecutionModal
+        isOpen={isExecutionModalOpen}
+        onClose={() => setIsExecutionModalOpen(false)}
+        byteCode={byteCode}
+        transactionHash={transactionHash}
       />
     </Container>
   );
