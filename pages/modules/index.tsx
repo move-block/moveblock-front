@@ -1,9 +1,10 @@
-import { Button, Pagination, Table, Typography } from 'antd';
+import { Pagination, Table } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Visibility } from 'src/MoveFunction';
+import Button from '~common/components/Button';
 import PageContainer from '~common/components/PageContainer';
 import { truncateWalletAddress } from '~common/utils';
 
@@ -51,17 +52,7 @@ const columns: ColumnsType<ModuleRowType> = [
     dataIndex: 'detailAddress',
     render: (detailAddress) => (
       <Link href={detailAddress}>
-        <Button
-          style={{
-            height: '26px',
-            width: '83px',
-            fontSize: '12px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-          type="primary"
-        >
+        <Button type="primary" size="small">
           Detail
         </Button>
       </Link>

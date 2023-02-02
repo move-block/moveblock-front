@@ -7,7 +7,7 @@ import HoverableItemContainer from '~common/components/HoverableItemContainer';
 import useWallet from '~common/hooks/useWallet';
 import useStack from '~stacks/hooks/useStack';
 import useStackMutation from '~stacks/hooks/useStackMutation';
-import Button from './Button';
+import Button from '../../common/components/Button';
 import FunctionModal from './FunctionModal';
 import StackFunctionItem from './StackFunctionItem';
 import ExecutionModal from '~stacks/components/ExecutionModal';

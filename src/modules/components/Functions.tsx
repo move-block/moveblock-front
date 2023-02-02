@@ -1,4 +1,4 @@
-import { Button as AntdButton, Input } from 'antd';
+import { Input } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useForm, Controller } from 'react-hook-form';
@@ -9,23 +9,7 @@ import useFunctionMutation from '~modules/hooks/useFunctionMutation';
 import CollapsableItemContainer from '~common/components/CollapsableItemContainer';
 import { authAtom } from '~pages/modules/[account]/[module]';
 import useWallet from '~common/hooks/useWallet';
-import { DefaultContainerProps } from '~common/components/ContainerProps';
-
-const Button = (props: any) => {
-  return (
-    <AntdButton
-      style={{
-        height: '26px',
-        width: '83px',
-        fontSize: '12px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-      {...props}
-    />
-  );
-};
+import Button from '~common/components/Button';
 
 const FunctionItem = ({
   name,
@@ -192,23 +176,20 @@ const FunctionItem = ({
           isEditing ? (
             <div className="flex gap-2">
               <Button
-                className="text-footnote py-[7px] px-[24px] border-none"
+                type="default"
+                size="small"
                 onClick={() => setIsEditing(false)}
               >
                 Cancel
               </Button>
-              <Button
-                type="primary"
-                className="text-footnote py-[7px] px-[24px]"
-                onClick={onClickSave}
-              >
+              <Button type="primary" size="small" onClick={onClickSave}>
                 Save
               </Button>
             </div>
           ) : (
             <Button
               type="primary"
-              className="text-footnote py-[7px] px-[24px]"
+              size="small"
               onClick={() => handleClickEdit()}
             >
               Edit
