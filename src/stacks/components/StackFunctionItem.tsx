@@ -75,63 +75,66 @@ const StackFunctionItem = ({
     >
       <div>{functionName}</div>
       {functionInfo?.description && <div>{functionInfo?.description}</div>}
-      <div>
-        <h4>params</h4>
-        <div className="flex gap-x-8 gap-y-2 flex-wrap">
-          {paramValues?.map((_value, index) => (
-            <div key={index} className="flex flex-col gap-1">
-              <div>
-                <Skeleton
-                  active
-                  title={{
-                    width: '50%',
-                  }}
-                  paragraph={false}
-                  loading={isFunctionInfoLoading}
-                >
-                  {functionInfo?.params[index + 1]?.type}
-                </Skeleton>
+      {paramValues?.length ? (
+        <div>
+          <h4>params</h4>
+          <div className="flex gap-x-8 gap-y-2 flex-wrap">
+            {paramValues?.map((_value, index) => (
+              <div key={index} className="flex flex-col gap-1">
+                <div>
+                  <Skeleton
+                    active
+                    title={{
+                      width: '50%',
+                    }}
+                    paragraph={false}
+                    loading={isFunctionInfoLoading}
+                  >
+                    {functionInfo?.params[index + 1]?.type}
+                  </Skeleton>
+                </div>
+                <Controller
+                  name={`blocks.${functionIndex}.paramValues.${index}`}
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      className={'w-60'}
+                      placeholder={functionInfo?.params[index + 1]?.name}
+                      disabled={!isEditing}
+                      {...field}
+                    />
+                  )}
+                />
               </div>
-              <Controller
-                name={`blocks.${functionIndex}.paramValues.${index}`}
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    className={'w-60'}
-                    placeholder={functionInfo?.params[index + 1]?.name}
-                    disabled={!isEditing}
-                    {...field}
-                  />
-                )}
-              />
-            </div>
-          ))}
-          {!paramValues?.length && (
-            <div className="text-footnote text-gray-300">(No params)</div>
-          )}
+            ))}
+          </div>
         </div>
-      </div>
-      <div>
-        <h4>generic type params</h4>
-        <div className="flex gap-x-8 gap-y-2 flex-wrap">
-          {genericParamValues?.map((_value, index) => (
-            <div key={index} className="flex flex-col gap-1">
-              <Controller
-                name={`blocks.${functionIndex}.genericParamValues.${index}`}
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    className={'w-60'}
-                    placeholder={functionInfo?.genericTypeParams?.[index]?.name}
-                    disabled={!isEditing}
-                    {...field}
-                  />
-                )}
-              />
-            </div>
-          ))}
+      ) : null}
+      {genericParamValues?.length ? (
+        <div>
+          <h4>generic type params</h4>
+          <div className="flex gap-x-8 gap-y-2 flex-wrap">
+            {genericParamValues?.map((_value, index) => (
+              <div key={index} className="flex flex-col gap-1">
+                <Controller
+                  name={`blocks.${functionIndex}.genericParamValues.${index}`}
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      className={'w-60'}
+                      placeholder={
+                        functionInfo?.genericTypeParams?.[index]?.name
+                      }
+                      disabled={!isEditing}
+                      {...field}
+                    />
+                  )}
+                />
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      ) : null}
       {simulationStatus === CheckStatus.SUCCESS && (
         <div>
           <h4>
