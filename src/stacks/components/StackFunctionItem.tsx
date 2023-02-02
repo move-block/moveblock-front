@@ -31,7 +31,7 @@ const StackFunctionItem = ({
       title={functionName}
       toggleOpen={toggleOpen}
       className="flex flex-col gap-4"
-      contentClassName="flex flex-col gap-2"
+      contentClassName="flex flex-col gap-4"
     >
       {functionInfo?.description && <div>{functionInfo?.description}</div>}
       <div>
@@ -68,6 +68,27 @@ const StackFunctionItem = ({
           {!paramValues?.length && (
             <div className="text-footnote text-gray-300">(No params)</div>
           )}
+        </div>
+      </div>
+      <div>
+        <h4>generic type params</h4>
+        <div className="flex gap-x-8 gap-y-2 flex-wrap">
+          {genericParamValues?.map((_value, index) => (
+            <div key={index} className="flex flex-col gap-1">
+              <Controller
+                name={`blocks.${functionIndex}.genericParamValues.${index}`}
+                control={control}
+                render={({ field }) => (
+                  <Input
+                    className={'w-60'}
+                    placeholder={functionInfo?.genericTypeParams?.[index]?.name}
+                    disabled={!isEditing}
+                    {...field}
+                  />
+                )}
+              />
+            </div>
+          ))}
         </div>
       </div>
       {isEditing && (
