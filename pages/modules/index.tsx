@@ -2,7 +2,7 @@ import { Button, Pagination, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/es/table';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Visibility } from 'src/MoveFunction';
 import Container from '~common/components/Container';
 import { truncateWalletAddress } from '~common/utils';
@@ -59,10 +59,13 @@ const columns: ColumnsType<ModuleRowType> = [
 ];
 
 const PAGE_SIZE = 10;
+const INTIAL_PAGE = 1;
 
 const Modules = () => {
   const router = useRouter();
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(INTIAL_PAGE);
+
+  const keyword = router.query.keyword as string;
 
   const {
     data: { data, totalCount },
@@ -83,6 +86,10 @@ const Modules = () => {
       detailAddress: `/modules/${account.address}/${module.name}?function=${name}`,
     })
   );
+
+  useEffect(() => {
+    setPage(INTIAL_PAGE);
+  }, [keyword]);
 
   return (
     <Container>

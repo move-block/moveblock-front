@@ -1,7 +1,7 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { Button, Modal, Pagination } from 'antd';
 import Table, { ColumnsType } from 'antd/lib/table';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { truncateWalletAddress } from '~common/utils';
 import Search from '~modules/components/Search';
 import useFunctions from '~modules/hooks/useFunctions';
@@ -26,6 +26,7 @@ interface ModuleRowType {
 }
 
 const PAGE_SIZE = 6;
+const INTIAL_PAGE = 1;
 
 const FunctionModal = ({
   isOpen,
@@ -37,7 +38,7 @@ const FunctionModal = ({
   onClose: () => void;
 }) => {
   const [keyword, setKeyword] = useState('');
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(INTIAL_PAGE);
 
   const columns: ColumnsType<ModuleRowType> = [
     {
@@ -117,6 +118,10 @@ const FunctionModal = ({
       },
     })
   );
+
+  useEffect(() => {
+    setPage(INTIAL_PAGE);
+  }, [keyword]);
 
   return (
     <Modal
