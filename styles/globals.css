@@ -100,3 +100,26 @@ h4 {
   margin-bottom: 12px !important;
   font-weight: 500 !important;
 }
+
+.ant-modal-content {
+  background-color: #262626 !important;
+  border-radius: 10px !important;
+}
+
+.ant-modal-header {
+  background-color: transparent !important;
+}
+
+.function-modal {
+  min-width: 42rem;
+}
+.function-modal .ant-table-thead th,
+.function-modal tbody {
+  color: #f0f0f0 !important;
+}
+.function-modal .ant-table-thead .ant-table-cell {
+  background-color: #434343 !important;
+}
+.function-modal .ant-table-tbody .ant-table-cell.ant-table-cell-row-hover {
+  background-color: transparent !important;
+}

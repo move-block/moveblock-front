@@ -11,6 +11,7 @@ import HoverableItemContainer from '~common/components/HoverableItemContainer';
 import { PlusCircleFilled } from '@ant-design/icons';
 import useWallet from '~common/hooks/useWallet';
 import StackFunctionItem from '~stacks/components/StackFunctionItem';
+import FunctionModal from '~stacks/components/FunctionModal';
 
 export type BlockFormType = {
   functionName: string;
@@ -32,6 +33,8 @@ const StackDetailPage = ({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [isEditing, setIsEditing] = useState(false);
   const { account } = useWallet();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: stack, isLoading } = useStack({
     id,
@@ -168,15 +171,7 @@ const StackDetailPage = ({
         )}
       </div>
       {isEditing && (
-        <button
-          onClick={() =>
-            appendBlock({
-              functionName: 'new block',
-              paramValues: [],
-              genericParamValues: [],
-            })
-          }
-        >
+        <button onClick={() => setIsModalOpen(true)}>
           <HoverableItemContainer
             className="flex flex-col gap-4 h-[198px]"
             _hover={
@@ -191,6 +186,24 @@ const StackDetailPage = ({
           </HoverableItemContainer>
         </button>
       )}
+      <FunctionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAdd={({
+          accountAddress,
+          moduleName,
+          functionName,
+          paramLength,
+          genericParamLength,
+        }) => {
+          const fullFunctionName = `${accountAddress}::${moduleName}::${functionName}`;
+          appendBlock({
+            functionName: fullFunctionName,
+            paramValues: new Array(paramLength).fill(''),
+            genericParamValues: new Array(genericParamLength).fill(''),
+          });
+        }}
+      />
     </Container>
   );
 };
