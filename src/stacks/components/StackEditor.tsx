@@ -15,6 +15,7 @@ import StackTitle from './StackTitle';
 import ExecutionModal from '~stacks/components/ExecutionModal';
 import usePetraWallet from '~common/hooks/useWallet';
 import executeStack from '~stacks/hooks/executeStack';
+import { useRouter } from 'next/router';
 
 export type BlockFormType = {
   functionName: string;
@@ -42,6 +43,7 @@ const StackEditor = ({ id }: { id?: number }) => {
   const [isEditing, setIsEditing] = useState(id ? false : true);
   const { account } = useWallet();
   const address = account?.address;
+  const router = useRouter();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -84,11 +86,16 @@ const StackEditor = ({ id }: { id?: number }) => {
       return;
     }
 
-    const saveStack = id ? updateStack : createStack;
-
     try {
-      await saveStack({ stack });
-      setIsEditing(false);
+      if (isNew) {
+        await createStack({ stack });
+        setIsEditing(false);
+        // should redirect to the new stack with edit mode
+        router.replace('/stacks');
+      } else {
+        await updateStack({ stack });
+        setIsEditing(false);
+      }
     } catch (e) {
       console.error(e);
     }
@@ -102,6 +109,7 @@ const StackEditor = ({ id }: { id?: number }) => {
     try {
       await deleteStack();
       setIsEditing(false);
+      router.replace('/stacks');
     } catch (e) {
       console.error(e);
     }
