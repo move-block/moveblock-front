@@ -28,7 +28,7 @@ const useFunctionMutation = ({
         JSON.stringify({
           description,
           param_names: paramNames,
-          generic_params: genericParams
+          generic_type_params: genericParams
         })
       );
 
