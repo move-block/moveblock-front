@@ -8,6 +8,7 @@ import type {
 
 export interface QueryProps extends PaginatedQueryProps {
   keyword?: string;
+  isEntry?: boolean;
 }
 
 interface Data {
@@ -16,9 +17,25 @@ interface Data {
   function_detail?: MoveFunctionDetailRawData;
 }
 
-const fetchFunctions = async (queryProps: QueryProps) => {
-  const params = Object.entries(queryProps).filter(([_key, value]) => !!value);
-  const searchParams = new URLSearchParams(params);
+const fetchFunctions = async ({
+  limit,
+  offset,
+  keyword,
+  isEntry,
+}: QueryProps) => {
+  const queryParams = {
+    limit: limit?.toString(),
+    offset: offset?.toString(),
+    keyword: keyword,
+    is_entry: isEntry ? 'true' : undefined,
+  };
+  const searchParams = new URLSearchParams(
+    Object.entries(queryParams).filter(([_, value]) => !!value) as [
+      string,
+      string
+    ][]
+  );
+
   const response = await fetch(`/api/functions?${searchParams}`);
   const {
     data,
