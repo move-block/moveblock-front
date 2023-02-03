@@ -12,8 +12,8 @@ const useFunctions = ({
   const { data, isLoading } = useQuery({
     queryKey: [
       'functions',
-      isEntry,
       {
+        isEntry,
         keyword,
         offset,
         limit,

@@ -1,44 +1,90 @@
-import { Skeleton, Input, Button } from 'antd';
+import { Skeleton, Input } from 'antd';
 import { CheckCircleTwoTone, CloseCircleTwoTone } from '@ant-design/icons';
-import { useState } from 'react';
-import { Control, Controller } from 'react-hook-form';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
 import CollapsableItemContainer from '~common/components/CollapsableItemContainer';
 import { parseFullFunctionName } from '~modules/hooks/fetchFunctionDetail';
 import useFunction from '~modules/hooks/useFunction';
 import useWallet, { TransactionPayload } from '~common/hooks/useWallet';
 import { JsonViewer } from '@textea/json-viewer';
-import { FormType, BlockFormType } from './StackEditor';
+import { BlockFormType } from './StackEditor';
+import Button from '~common/components/Button';
 
-enum CheckStatus {
-  NOT_CHECKED,
-  SUCCESS,
-  FAIL,
+enum BlockStatus {
+  NOT_CHANGED,
+  CHANGED,
+  SIMULATION_SUCCESS,
+  SIMULATION_FAIL,
 }
 
 const StackFunctionItem = ({
-  isEditing,
-  control,
   functionIndex,
   onRemove,
+  onSave,
+  onReset,
   functionName,
   paramValues,
   genericParamValues,
-  getValues,
 }: {
-  isEditing: boolean;
-  control: Control<FormType>;
   functionIndex: number;
-  onRemove: () => void;
-  getValues: () => BlockFormType;
+  onRemove: () => Promise<void>;
+  onSave: () => Promise<void>;
+  onReset: () => Promise<void>;
 } & BlockFormType) => {
   const [isOpen, setIsOpen] = useState(true);
   const toggleOpen = () => setIsOpen(!isOpen);
   const { simulateFunction } = useWallet();
-  /*0: 안한거, 1: 한거, 2: 실패한거*/
-  const [simulationStatus, setSimulationStatus] = useState<CheckStatus>(
-    CheckStatus.NOT_CHECKED
-  );
+
   const [simulationResult, setSimulationResult] = useState('');
+
+  const {
+    control,
+    getValues: getFormValues,
+    formState: { dirtyFields },
+  } = useFormContext();
+
+  const getValues = useCallback<() => BlockFormType>(
+    () => getFormValues(`blocks.${functionIndex}`),
+    [functionIndex, getFormValues]
+  );
+  const isDirty = useMemo(() => {
+    const blockDirtyFields = dirtyFields.blocks?.[functionIndex] as Partial<
+      Readonly<{
+        functionName?: boolean | undefined;
+        paramValues?: boolean[] | undefined;
+        genericParamValues?: boolean[] | undefined;
+      }>
+    >;
+    if (!blockDirtyFields) {
+      return false;
+    }
+
+    const {
+      isNew,
+      paramValues: { length: paramValuesLength },
+      genericParamValues: { length: genericParamValuesLength },
+    } = getValues();
+
+    if (isNew && paramValuesLength === 0 && genericParamValuesLength === 0) {
+      return false;
+    }
+
+    const { functionName, paramValues, genericParamValues } = blockDirtyFields;
+    const dirtyParamCount = (paramValues || []).filter(
+      (value) => !!value
+    ).length;
+    const dirtyGenericCount = (genericParamValues || []).filter(
+      (value) => !!value
+    ).length;
+    return functionName || dirtyParamCount > 0 || dirtyGenericCount > 0;
+  }, [dirtyFields.blocks, functionIndex, getValues]);
+
+  const [blockStatus, setBlockStatus] = useState<BlockStatus>(
+    isDirty ? BlockStatus.CHANGED : BlockStatus.NOT_CHANGED
+  );
+  useEffect(() => {
+    setBlockStatus(isDirty ? BlockStatus.CHANGED : BlockStatus.NOT_CHANGED);
+  }, [isDirty]);
 
   const { data: functionInfo, isLoading: isFunctionInfoLoading } =
     useFunction(functionName);
@@ -56,11 +102,11 @@ const StackFunctionItem = ({
     };
 
     const result = await simulateFunction(payload);
-    if (result != null && result.success) {
-      setSimulationStatus(CheckStatus.SUCCESS);
+    if (result?.success) {
+      setBlockStatus(BlockStatus.SIMULATION_SUCCESS);
       setSimulationResult(result.events);
     } else {
-      setSimulationStatus(CheckStatus.FAIL);
+      setBlockStatus(BlockStatus.SIMULATION_FAIL);
     }
   };
 
@@ -99,7 +145,6 @@ const StackFunctionItem = ({
                     <Input
                       className={'w-60'}
                       placeholder={functionInfo?.params[index + 1]?.name}
-                      disabled={!isEditing}
                       {...field}
                     />
                   )}
@@ -124,7 +169,6 @@ const StackFunctionItem = ({
                       placeholder={
                         functionInfo?.genericTypeParams?.[index]?.name
                       }
-                      disabled={!isEditing}
                       {...field}
                     />
                   )}
@@ -134,7 +178,7 @@ const StackFunctionItem = ({
           </div>
         </div>
       ) : null}
-      {simulationStatus === CheckStatus.SUCCESS && (
+      {simulationResult && (
         <div>
           <h4>
             Changes <CheckCircleTwoTone twoToneColor="#597EF7" />
@@ -149,7 +193,7 @@ const StackFunctionItem = ({
           />
         </div>
       )}
-      {simulationStatus === CheckStatus.FAIL && (
+      {blockStatus === BlockStatus.SIMULATION_FAIL && (
         <div>
           <h4>
             Changes <CloseCircleTwoTone twoToneColor="#eb2f96" />
@@ -157,26 +201,28 @@ const StackFunctionItem = ({
           Simulation failed
         </div>
       )}
-
-      {isEditing && (
-        <div className="mt-2 flex justify-end gap-2">
-          <Button
-            type="primary"
-            danger
-            className="border-none h-fit py-0"
-            onClick={onRemove}
-          >
+      <div className="mt-2 flex justify-end gap-2">
+        {blockStatus === BlockStatus.CHANGED && (
+          <Button type="default" size="small" onClick={onReset}>
+            Cancel
+          </Button>
+        )}
+        {blockStatus !== BlockStatus.CHANGED && (
+          <Button type="danger" size="small" onClick={onRemove}>
             Delete
           </Button>
-          <Button
-            type="primary"
-            className="border-none h-fit py-0"
-            onClick={handleSimulate}
-          >
+        )}
+        {blockStatus === BlockStatus.CHANGED && (
+          <Button type="primary" size="small" onClick={handleSimulate}>
             Simulate
           </Button>
-        </div>
-      )}
+        )}
+        {blockStatus === BlockStatus.SIMULATION_SUCCESS && (
+          <Button type="primary" size="small" onClick={onSave}>
+            Set Block
+          </Button>
+        )}
+      </div>
     </CollapsableItemContainer>
   );
 };

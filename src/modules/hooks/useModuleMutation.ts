@@ -1,6 +1,6 @@
-import { QueryClient, useMutation } from "@tanstack/react-query";
-import mutateModule, { ModuleMutationBody } from "./mutateModule";
-import useWallet from "~common/hooks/useWallet";
+import { QueryClient, useMutation } from '@tanstack/react-query';
+import mutateModule, { ModuleMutationBody } from './mutateModule';
+import useWallet from '~common/hooks/useWallet';
 
 export interface ModuleMutationOptions {
   alias?: string;
@@ -34,16 +34,18 @@ const useModuleMutation = () => {
           rev: rev,
           subdir: subdir,
         })
-      )) || { payload: {}, public_key: "" };
+      )) || { payload: {}, public_key: '' };
 
       return mutateModule(
         { payload: payload, pubkey: public_key } as ModuleMutationBody,
-        name || "",
-        account || ""
+        name || '',
+        account || ''
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['module']);
+      queryClient.invalidateQueries({
+        queryKey: ['modules'],
+      });
     },
   });
 

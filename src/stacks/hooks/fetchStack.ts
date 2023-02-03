@@ -16,7 +16,7 @@ const fetchStack = async ({ address, id }: StackDetailQueryProps) => {
   const data: MoveStackRawData = await response.json();
 
   if (!data) {
-    return null;
+    return undefined;
   }
 
   const { name, stack: blocks, last_edit_datetime } = data;
