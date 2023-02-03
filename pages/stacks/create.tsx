@@ -17,9 +17,9 @@ const StackCreatePage = () => {
     <StackEditor
       isNew
       onSubmit={async (stack) => {
-        await createStack({ stack });
-        // should redirect to the new stack with edit mode
-        router.replace('/stacks');
+        const { id } = await createStack({ stack });
+
+        router.replace(`/stacks/${id}`);
       }}
     />
   );
