@@ -39,6 +39,9 @@ const useStackMutation = ({
       if (!response.ok) {
         throw new Error('Failed to create stack');
       }
+
+      const { id } = await response.json();
+      return { id: id as number };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

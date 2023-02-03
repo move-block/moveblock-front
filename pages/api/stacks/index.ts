@@ -26,6 +26,10 @@ export default async function handler(
       headers,
       body: JSON.stringify(req.body),
     });
-    res.status(response.status).end();
+    const data = await response.text();
+
+    res.status(response.status).json({
+      id: data,
+    });
   }
 }
