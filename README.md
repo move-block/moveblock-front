@@ -37,8 +37,8 @@ const setValue = useSetRecoilState(valueAtom); // set만
 
 ### CSS 관련 주의사항 - globals.css
 
-AntDesign + tailwind 의 끔찍한 혼종..
-AntDesign은 컴포넌트의 일부 엘리먼트에 대해서만 클래스명을 설정할 수 있다.
+AntDesign + tailwind 의 끔찍한 혼종..  
+AntDesign은 컴포넌트의 일부 엘리먼트에 대해서만 클래스명을 설정할 수 있다.  
 따라서 더 세부적인 엘리먼트를 커스터마이즈 하려면 globals.css에 직접 설정해줘야한다.
 
 ## 폴더 구조
