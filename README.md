@@ -24,6 +24,21 @@ const value = useRecoilValue(valueAtom); // get만
 const setValue = useSetRecoilState(valueAtom); // set만
 ```
 
+### API 추가시 워크플로우소개
+
+원문: https://github.com/a41ventures/moveblock-front/pull/3 참고
+
+아래 1234 순으로 올라가서 응답받고, 1에서 그 정보를 moduleAtom에 저장하고, 각 컴포넌트(ModuleInfo.tsx 등)에서 moduleAtom 값 접근
+
+1. `[...moduleParams].tsx`: 웹페이지 그려주는 컴포넌트
+2. `useModule.ts`: 응답 결과 캐싱하는 훅
+3. `fetchModule.ts`: 응답 결과를 정제하는 훅
+4. `/pages/api/modules.ts`: 외부 API 프록시
+
+### globals.css
+
+CSS 관련 주의사항 소개 - AntDesign + tailwind 의 끔찍한 혼종.. -> globals.css
+
 ## 폴더 구조
 
 - pages/ 라우터 같은 구조. (Next.js에 따름)
